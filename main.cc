@@ -21,6 +21,7 @@ int main()
   mat1.addEntry(1, 10, 9.0);
 
   mat1.addEntry(4, 3, 11.0);
+  mat1.addEntry(5, 3, 11.0);
 
   return 0;
 }
