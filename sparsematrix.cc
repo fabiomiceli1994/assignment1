@@ -11,19 +11,12 @@
 #include "sparsematrix.hh"
 
 //default constructor
-SparseMatrix::SparseMatrix ( int const N )
+SparseMatrix::SparseMatrix ( int const M, int const N )
 {
-  rowSize_ = N;
+  rowSize_ = M;
   colSize_ = N;
-  rows_ = new std::vector<std::vector<double>*> (N);
-  // rows_ = &rows;
-  std::cout << "N: " << N << std::endl;
-  colsInd_ =  new std::vector<std::vector<int>*> (N);
-  // colsInd_ = &colsInd;
-  //rows_ = &(  )
-  //rows_ =  {{0.0}};
-  //colsInd_ = {{0}};
-  //rows_.resize()
+  rows_ = new std::vector<std::vector<double>*> (M);
+  colsInd_ = new std::vector<std::vector<int>*> (N);
 }
 
 // set the values of the pivate data
@@ -59,6 +52,7 @@ SparseMatrix::SparseMatrix ( int const N )
 //   rows_ = source.rows_;
 //   colsInd_ = source.colsInd_;
 // }
+
 //
 // //descructor
 SparseMatrix::~SparseMatrix()
@@ -150,39 +144,39 @@ int SparseMatrix::getColSize () //returns the number of columns
 void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds an entry to the matrix in the location [rowNumb][colNumb]
 {
 
-  if( (rowNumb<=rowSize_) && (colNumb<=colSize_) && (rowNumb>=0) && (colNumb>=0) )
+  if( (rowNumb<=rowSize_) && (colNumb<=colSize_) && (rowNumb>=0) && (colNumb>=0) ) //checking consistency of the request
   {
-    std::vector<int>* current_line_Indexes   = colsInd_->at(rowNumb);
-    std::vector<double>* current_line_Values = rows_->at(rowNumb);
 
+    std::vector<int>* current_line_Indices   = colsInd_->at(rowNumb); //assigning the reference of rowNumb of colsInd to a vector of pointers representing the line of the indices matrix I am currently looking at
+    std::vector<double>* current_line_Values = rows_->at(rowNumb); //assigning the reference of rowNumb of rows to a vector of pointers representing the line of the entries matrix I am currently looking at
 
-    if(current_line_Indexes == 0) //if 0 I have not acessed the line before
+    if( current_line_Indices == 0 ) //if 0 I have not accessed the line before
     {
 
-      (*colsInd_)[rowNumb] = new std::vector<int>(1, colNumb);
-      (*rows_)[rowNumb] = new std::vector<double>(1, newValue);
+      (*colsInd_)[rowNumb] = new std::vector<int>(1, colNumb); //dynamically puts a vector of size 1 and value colNumb in the row rowNumb of the indices matrix
+      (*rows_)[rowNumb] = new std::vector<double>(1, newValue); //dynamically puts a vector of size 1 and value newValue in the row rowNumb of the enties matrix
 
     }
-    else // Every other time
+    else // Every other time, i.e. if I have accessed the line before
     {
-      current_line_Indexes->push_back(colNumb);
-      current_line_Values->push_back(newValue);
+      current_line_Indices->push_back(colNumb); //adds the index through a pushback
+      current_line_Values->push_back(newValue); //adds the entry through a pushback
     }
 
-   //  std::vector<int>* current_line_STAMPA = colsInd_->at(rowNumb);
-   //  std::cout << "->Indexes " << std::endl;
-   //  for(auto const& value: (*current_line_STAMPA))
-   //   std::cout << "I: " << value << std::endl;
-   //
-   // std::vector<double>* current_line_STAMPA_V = rows_->at(rowNumb);
-   // std::cout << "->Values " << std::endl;
-   // for(auto const& value: (*current_line_STAMPA_V)){
-   //  std::cout << "V: " << value << std::endl;
-   //  }
+    // std::vector<int>* current_line_STAMPA = colsInd_->at(rowNumb);
+    // std::cout << "->Indices " << std::endl;
+    // for(auto const& value: (*current_line_STAMPA))
+    //  std::cout << "I: " << value << std::endl;
+    //
+    // std::vector<double>* current_line_STAMPA_V = rows_->at(rowNumb);
+    // std::cout << "->Values " << std::endl;
+    // for(auto const& value: (*current_line_STAMPA_V)){
+    //  std::cout << "V: " << value << std::endl;
+    // }
   }
   else
   {
-    std::cout << "Error. Trying to update an entry which does not exists." << std::endl;
+    std::cout << "Error. Trying to add an entry at a non existing location." << std::endl;
     exit(EXIT_FAILURE);
   }
 }
@@ -246,11 +240,11 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
 
 
 
-// std::vector<int>* current_line_Indexes   = colsInd_->at(rowNumb);
+// std::vector<int>* current_line_Indices   = colsInd_->at(rowNumb);
 // std::vector<double>* current_line_Values = rows_->at(rowNumb);
 //
 //
-// if(current_line_Indexes == 0) //if 0 I have not acessed the line before
+// if(current_line_Indices == 0) //if 0 I have not acessed the line before
 // {
 //
 //   (*colsInd_)[rowNumb] = new std::vector<int>(1, colNumb);
@@ -259,12 +253,12 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
 // }
 // else // Every other time
 // {
-//   current_line_Indexes->push_back(colNumb);
+//   current_line_Indices->push_back(colNumb);
 //   current_line_Values->push_back(newValue);
 // }
 //
 // //  std::vector<int>* current_line_STAMPA = colsInd_->at(rowNumb);
-// //  std::cout << "->Indexes " << std::endl;
+// //  std::cout << "->Indices " << std::endl;
 // //  for(auto const& value: (*current_line_STAMPA))
 // //   std::cout << "I: " << value << std::endl;
 // //

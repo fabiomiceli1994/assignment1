@@ -15,13 +15,12 @@ int main()
 {
 
   // SparseMatrix matrix = SparseMatrix (1);
-  SparseMatrix mat1 = SparseMatrix (10);
+  SparseMatrix mat1 = SparseMatrix (10, 10);
 
   mat1.addEntry(1, 5, 3.0);
   mat1.addEntry(1, 10, 9.0);
 
   mat1.addEntry(4, 3, 11.0);
-  mat1.addEntry(5, 3, 11.0);
 
   return 0;
 }
