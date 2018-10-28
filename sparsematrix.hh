@@ -15,8 +15,8 @@
 class SparseMatrix
 {
 public:
-  SparseMatrix( int const sizeMatrix ); //default construct
-  SparseMatrix( int rowSize, int colSize );
+  SparseMatrix(); //default construct
+  SparseMatrix( int rowSize, int colSize ); //sets value of private data
   SparseMatrix( const SparseMatrix& source ); //copy constructor
   ~SparseMatrix(); //destructor
 
@@ -33,11 +33,10 @@ public:
 
   int getRowSize (); //gets the number of rows
   int getColSize (); //gets the number of columns
-  double getEntry ( int rowNumb, int colNumb ); //gets the specified entry of the matrix
-  double getValue (int x, int y);
   void addEntry ( int rowNumb, int colNumb, double newValue); //adds an entry to the matrix in the location [rowNumb][colNumb]
+  double getValue (int x, int y); //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
-  void dump_printMatrix ();
+  void printEntries (); //prints the entries in the order they are pushed in
   //std::vector<double> inversion ( double a, double delta, double tol);
 
 private:

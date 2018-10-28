@@ -12,46 +12,30 @@
 #include "sparsematrix.hh"
 
 //default constructor
-SparseMatrix::SparseMatrix ( int const M, int const N )
+SparseMatrix::SparseMatrix ()
 {
-  rowSize_ = M;
-  colSize_ = N;
-  rows_ = new std::vector<std::vector<double>*> (M);
-  colsInd_ = new std::vector<std::vector<int>*> (M);
-
-  // std::cout << "Const" << rows_ << std::endl;
+  rowSize_ = 1;
+  colSize_ = 1;
+  rows_ = new std::vector<std::vector<double>*> (1);
+  colsInd_ = new std::vector<std::vector<int>*> (1);
 }
 
-//default cobstructio
-// SparseMatrix::SparseMatrix ( )
-// {
-//
-// }
+//sets the value of the private data
+SparseMatrix::SparseMatrix ( int const M, int const N )
+{
+  if( M>0 && N>0 )
+  {
+    rowSize_ = M;
+    colSize_ = N;
+    rows_ = new std::vector<std::vector<double>*> (M);
+    colsInd_ = new std::vector<std::vector<int>*> (M);
+  }else
+  {
+    std::cout << "Error. Either (Both) the column or (and) row size provided are not positive integers." << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
-// set the values of the pivate data
-// SparseMatrix::SparseMatrix ( int rowSize, int colSize )
-// {
-//   if ( (rowSize>0) && (colSize>0) )
-//   {
-//     rowSize_ = rowSize;
-//     colSize_ = colSize;
-//     rows_  = std::vector<std::vector<double>>(rowSize, std::vector<double>(colSize, 0));
-//     colsInd_ = std::vector<std::vector<int>>(rowSize, std::vector<int>(colSize, 0));
-//     for( int i=0; i<rowSize; i++)
-//     {
-//       for( int j=0; j<colSize; j++)
-//       {
-//         colsInd_[i][j] = j;
-//       }
-//     }
-//   }else
-//   {
-//     std::cout << "Error. The row and/or column provided are not positive integers." << std::endl;
-//     exit(EXIT_FAILURE);
-//   }
-
-// }
-
+}
 
 // Copy constructor
 SparseMatrix::SparseMatrix(const SparseMatrix& source )
@@ -65,21 +49,17 @@ SparseMatrix::SparseMatrix(const SparseMatrix& source )
   int rows_size = (*source.rows_).size();
   for(int i=0; i<rows_size; ++i)
   {
-    // std::cout << "I: " << i << std::endl;
 
-    // std::cout << source.rows_ << std::endl;
     std::vector<double>* addr_of_values = (*source.rows_).at(i);
 
     if(addr_of_values == 0)
+    {
       continue;
+    }
 
-    // std::cout << "2" << std::endl;
-    // std::cout << addr_of_values << std::endl;
     std::vector<double>* copy_of_values = new std::vector<double>(*addr_of_values);
 
-    // std::cout << "3" << std::endl;
     (*this->rows_)[i] = copy_of_values;
-    // std::cout << "4" << std::endl;
 
     std::vector<int>* addr_of_values_colsInd = (*source.colsInd_).at(i);
     std::vector<int>* copy_of_values_colsInd = new std::vector<int>(*addr_of_values_colsInd);
@@ -89,10 +69,11 @@ SparseMatrix::SparseMatrix(const SparseMatrix& source )
   }
 }
 
-//
-// //descructor
+//descructor
 SparseMatrix::~SparseMatrix()
 {}
+
+
 //
 // bool SparseMatrix::operator==( const SparseMatrix& source )
 // {
@@ -172,11 +153,6 @@ int SparseMatrix::getColSize () //returns the number of columns
   return colSize_;
 }
 
-// double SparseMatrix::getEntry ( int rowNumb, int colNumb ) //returns the element [rowNumb][colNumb]
-// {
-//   return rows_[rowNumb][colNumb];
-// }
-
 void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds an entry to the matrix in the location [rowNumb][colNumb]
 {
 
@@ -216,36 +192,6 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
     exit(EXIT_FAILURE);
   }
 }
-
-// std::vector<double> inversion ( double a, double delta, doubel tol)
-// {
-//   std::vector<double> w (rowSize_, 0); //vector w required by the assignment
-//   std::vector<double> D(rowSize_, 0); //vector D required by the assignment
-//   double delta = 1; //delta. Da rivedere per renderlo migliore. Funzione di controllo sulla positivita di delta: aggiungere.
-//   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
-//
-//   for( int i=0; i<rowSize_; i++) //initialising w[i] and D[i]
-//   {
-//     for( int j=0; j<colSize_; j++)
-//     {
-//       w[i] = (i+1)/(rowSize_+1);
-//       D[i] = a*(w[i]-0.5)*(w[i]-0.5)+delta;
-//       if( (i-1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i-1] );
-//       }else if( i == j )
-//       {
-//         (*this).addEntry( i, j, D[i] + D[i-1] );
-//       }else if( (i+1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i] );
-//       }else
-//       {
-//         (*this).addEntry( i, j, 0 );
-//       }
-//     }
-//   }
-// }
 
 
 double SparseMatrix::getValue (int x, int y) //Get the value (x, y) in the real matrix. x is right even inthe actual ones
@@ -294,7 +240,7 @@ void SparseMatrix::printMatrix () //prints the matrix
 }
 
 
-void SparseMatrix::dump_printMatrix () //prints the matrix
+void SparseMatrix::printEntries () //prints the entries in the order they are pushed in
 {
 
   for( int i=0; i< rowSize_; ++i)
@@ -318,6 +264,39 @@ void SparseMatrix::dump_printMatrix () //prints the matrix
     std::cout << std::endl;
   }
 }
+
+// std::vector<double> inversion ( double a, double delta, doubel tol)
+// {
+//   std::vector<double> w (rowSize_, 0); //vector w required by the assignment
+//   std::vector<double> D(rowSize_, 0); //vector D required by the assignment
+//   double delta = 1; //delta. Da rivedere per renderlo migliore. Funzione di controllo sulla positivita di delta: aggiungere.
+//   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
+//
+//   for( int i=0; i<rowSize_; i++) //initialising w[i] and D[i]
+//   {
+//     for( int j=0; j<colSize_; j++)
+//     {
+//       w[i] = (i+1)/(rowSize_+1);
+//       D[i] = a*(w[i]-0.5)*(w[i]-0.5)+delta;
+//       if( (i-1) == j )
+//       {
+//         (*this).addEntry( i, j, -D[i-1] );
+//       }else if( i == j )
+//       {
+//         (*this).addEntry( i, j, D[i] + D[i-1] );
+//       }else if( (i+1) == j )
+//       {
+//         (*this).addEntry( i, j, -D[i] );
+//       }else
+//       {
+//         (*this).addEntry( i, j, 0 );
+//       }
+//     }
+//   }
+// }
+
+
+
 //
 // //multiplication by a scalar, opposite order
 // SparseMatrix operator*(double a, SparseMatrix A)

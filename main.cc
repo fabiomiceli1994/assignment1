@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
-
+#include <algorithm>
 
 #include "sparsematrix.hh"
 
