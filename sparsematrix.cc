@@ -16,7 +16,13 @@ SparseMatrix::SparseMatrix ( int const M, int const N )
   rowSize_ = M;
   colSize_ = N;
   rows_ = new std::vector<std::vector<double>*> (M);
-  colsInd_ = new std::vector<std::vector<int>*> (N);
+  colsInd_ = new std::vector<std::vector<int>*> (M);
+}
+
+//default cobstructio
+SparseMatrix::SparseMatrix ( )
+{
+
 }
 
 // set the values of the pivate data
@@ -45,13 +51,37 @@ SparseMatrix::SparseMatrix ( int const M, int const N )
 
 
 // Copy constructor
-// SparseMatrix::SparseMatrix(const SparseMatrix& source )
-// {
-//   rowSize_ = source.rowSize_;
-//   colSize_ = source.colSize_;
-//   rows_ = source.rows_;
-//   colsInd_ = source.colsInd_;
-// }
+SparseMatrix::SparseMatrix(const SparseMatrix& source )
+{
+  rowSize_ = source.rowSize_;
+  colSize_ = source.colSize_;
+  tmp_src = (*source.rows_);
+
+  this.rows_ = new std::vector<std::vector<double>*> (rowSize_);
+  this.colsInd_ = new std::vector<std::vector<int>*> (rowSize_);
+
+  int i = 0;
+  int rows_size = (*source.rows_).size();
+  for(int i=0; i<rows_size; ++i)
+  {
+    std::vector<double>* addr_of_values = (*source.rows_).at(i);
+    std::vector<double> copy_of_values = (*add_of_values) // CHECK IF DYNAMICALLY ALLOCATED
+    (*this.rows_)[i] = (&copy_of_values)
+
+    std::vector<int>* addr_of_values_colsInd = (*source.colsInd_).at(i);
+    std::vector<int> copy_of_values_colsInd = (*addr_of_values_colsInd) // CHECK IF DYNAMICALLY ALLOCATED
+    (*this.colsInd_)[i] = (&copy_of_values_colsInd)
+
+    i++;
+    std::cout << "I: " << value << std::endl;
+  }
+
+  // std::vector<std::vector<double>*>* rows_source_copy = source.rows_;
+  // std::vector<std::vector<double>*>* colInd_source_copy = source.colsInd_;
+  // // rows_ = address_of_copy_of_rows_from_source; ideam colsInd
+  // rows_ = source.rows_;
+  // colsInd_ = source.colsInd_;
+}
 
 //
 // //descructor
