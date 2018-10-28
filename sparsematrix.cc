@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
+#include <algorithm>    // std::find
 
 #include "sparsematrix.hh"
 
@@ -17,13 +18,15 @@ SparseMatrix::SparseMatrix ( int const M, int const N )
   colSize_ = N;
   rows_ = new std::vector<std::vector<double>*> (M);
   colsInd_ = new std::vector<std::vector<int>*> (M);
+
+  // std::cout << "Const" << rows_ << std::endl;
 }
 
 //default cobstructio
-SparseMatrix::SparseMatrix ( )
-{
-
-}
+// SparseMatrix::SparseMatrix ( )
+// {
+//
+// }
 
 // set the values of the pivate data
 // SparseMatrix::SparseMatrix ( int rowSize, int colSize )
@@ -55,32 +58,35 @@ SparseMatrix::SparseMatrix(const SparseMatrix& source )
 {
   rowSize_ = source.rowSize_;
   colSize_ = source.colSize_;
-  tmp_src = (*source.rows_);
 
-  this.rows_ = new std::vector<std::vector<double>*> (rowSize_);
-  this.colsInd_ = new std::vector<std::vector<int>*> (rowSize_);
+  this->rows_ = new std::vector<std::vector<double>*> (rowSize_);
+  this->colsInd_ = new std::vector<std::vector<int>*> (rowSize_);
 
-  int i = 0;
   int rows_size = (*source.rows_).size();
   for(int i=0; i<rows_size; ++i)
   {
+    // std::cout << "I: " << i << std::endl;
+
+    // std::cout << source.rows_ << std::endl;
     std::vector<double>* addr_of_values = (*source.rows_).at(i);
-    std::vector<double> copy_of_values = (*add_of_values) // CHECK IF DYNAMICALLY ALLOCATED
-    (*this.rows_)[i] = (&copy_of_values)
+
+    if(addr_of_values == 0)
+      continue;
+
+    // std::cout << "2" << std::endl;
+    // std::cout << addr_of_values << std::endl;
+    std::vector<double>* copy_of_values = new std::vector<double>(*addr_of_values);
+
+    // std::cout << "3" << std::endl;
+    (*this->rows_)[i] = copy_of_values;
+    // std::cout << "4" << std::endl;
 
     std::vector<int>* addr_of_values_colsInd = (*source.colsInd_).at(i);
-    std::vector<int> copy_of_values_colsInd = (*addr_of_values_colsInd) // CHECK IF DYNAMICALLY ALLOCATED
-    (*this.colsInd_)[i] = (&copy_of_values_colsInd)
+    std::vector<int>* copy_of_values_colsInd = new std::vector<int>(*addr_of_values_colsInd);
+    (*this->colsInd_)[i] = copy_of_values_colsInd;
 
     i++;
-    std::cout << "I: " << value << std::endl;
   }
-
-  // std::vector<std::vector<double>*>* rows_source_copy = source.rows_;
-  // std::vector<std::vector<double>*>* colInd_source_copy = source.colsInd_;
-  // // rows_ = address_of_copy_of_rows_from_source; ideam colsInd
-  // rows_ = source.rows_;
-  // colsInd_ = source.colsInd_;
 }
 
 //
@@ -242,18 +248,76 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
 // }
 
 
-// void SparseMatrix::printMatrix () //prints the matrix
-// {
-//   for( int i=0; i< rowSize_; i++)
-//   {
-//     for( int j=0; j< colSize_; j++)
-//     {
-//       std::cout.width(6);
-//       std::cout << rows_[i][j];
-//     }
-//     std::cout << std::endl;
-//   }
-// }
+double SparseMatrix::getValue (int x, int y) //Get the value (x, y) in the real matrix. x is right even inthe actual ones
+{
+  if ( (*colsInd_).at(x) == 0 )
+  {
+    return 0.0;
+  }
+
+  std::vector<int> curr_row = (*(*colsInd_).at(x)); // copying the x-th vector of colsInd in curr_row
+
+  // find y in row
+  std::vector<int>::iterator it;
+  //std::find finds y in the given vector. y is the column index of the big matrix. But I have to find the column index of colsInd_ containing y
+  //to find the position I use std::distance
+  ptrdiff_t pos = std::distance(curr_row.begin(),       std::find (curr_row.begin(), curr_row.end(), y));
+
+  if(pos >= curr_row.size()) { //no y value present. Then returns 0.
+    return 0.0;
+  } else {
+    //std::cout << "Pos: " << pos << std::endl;
+  }
+
+  // Using x and pos into rows_ to access the entry value
+  double found_value = (*(*rows_).at(x)).at(pos);
+
+  //std::cout << "Value in " << x << ","<< y<< " is " << found_value << std::endl;
+
+  return found_value;
+
+}
+
+
+
+void SparseMatrix::printMatrix () //prints the matrix
+{
+
+  for( int i=0; i< rowSize_; ++i)
+  {
+    for( unsigned int j=0; j< colSize_; ++j)
+    {
+      std::cout << getValue(i, j);
+    }
+    std::cout << std::endl;
+  }
+}
+
+
+void SparseMatrix::dump_printMatrix () //prints the matrix
+{
+
+  for( int i=0; i< rowSize_; ++i)
+  {
+    for( unsigned int j=0; j< colSize_; ++j)
+    {
+      if( (*rows_).at(i) == 0 )
+      {
+        std::cout << 0 << "\t";
+      }else
+      {
+        if(j < (*(*rows_).at(i)).size())
+        {
+          std::cout << (*(*rows_).at(i)).at(j) << "\t";
+        }else
+        {
+          std::cout << 0 << "\t";
+        }
+      }
+    }
+    std::cout << std::endl;
+  }
+}
 //
 // //multiplication by a scalar, opposite order
 // SparseMatrix operator*(double a, SparseMatrix A)
