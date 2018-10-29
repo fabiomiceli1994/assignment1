@@ -23,14 +23,36 @@ int main()
 
   mat1.addEntry(4, 3, 11.0);
 
-  mat1.printMatrix();
+  // mat1.printMatrix();
 
 
-  SparseMatrix mat_c = mat1;
+  // SparseMatrix mat_c = mat1;
+  //
+  // std::cout << "\n\n" << std::endl;
+  //
+  // mat_c.printMatrix();
 
-  std::cout << "\n\n" << std::endl;
+  SparseMatrix mat = SparseMatrix (3, 3);
+  mat.addEntry(0, 0, 2);
+  mat.addEntry(0, 1, -1);
+  mat.addEntry(0, 2, 0);
+  mat.addEntry(1, 0, -1);
+  mat.addEntry(1, 1, 2);
+  mat.addEntry(1, 2, -1);
+  mat.addEntry(2, 0, 0);
+  mat.addEntry(2, 1, -1);
+  mat.addEntry(2, 2, 2);
+  std::vector<double> b = {1, 1, 1};
+  std::vector<double> x_0 = {0, 0, 0};
+  std::vector<double> check = vectorSub(b, multiplication(mat, x_0));
 
-  mat_c.printMatrix();
+  // for(unsigned int i = 0; i<check.size(); ++i)
+  // {
+  //   std::cout << "check " << " " << check.at(i) << std::endl;
+  // }
+
+Gauss_Seidel ( x_0, b, mat, 0.0001, "ciao" );
+
 
 
 

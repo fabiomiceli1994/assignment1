@@ -275,40 +275,7 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 
 
 
-void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double> b, const SparseMatrix& A, double tol, std::string Filename )
-{
-  //checks consistency of the matrix and vector sizes
-  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
-  {
-    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
-    exit(EXIT_FAILURE);
-  }
 
-  // in every other case
-  double sigma; //stores the partial sums I need to implent the algorithm
-  int iterations = 0; //counts the iterations which are necessary to converge
-  std::vector<double> residual (b.size()); // declaring the residual
-  residual = vectorSub(b, multiplication(A, x_0));
-
-  while( LinfNorm(residual) > tol )
-  {
-      for( unsigned int i=0; i<x_0.size(); ++i)
-      {
-        sigma = 0;
-        for( unsigned int j=0; j<A.getColSize(); ++j)
-        {
-          if( j != i)
-          {
-            sigma = sigma + A.getValue(i, j)*x_0.at(i);
-          }
-        }
-        x_0.at(i) = (b.at(i)-sigma)/(A.getValue(i, i));
-      }
-      iterations++;
-  }
-
-
-}
 
 
 // std::vector<double> inversion ( double a, double delta, doubel tol)
@@ -445,6 +412,53 @@ std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 )
 
 double LinfNorm ( std::vector<double> v )
 {
-  double max = *max_element(v.begin(), v.end());
-  return max;
+  double M1 = *max_element(v.begin(), v.end());
+  double M2 = fabs(*min_element(v.begin(), v.end()));
+  return  std::max(M1, M2);
+}
+
+void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const SparseMatrix& A, double tol, std::string Filename )
+{
+  //checks consistency of the matrix and vector sizes
+  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
+  {
+    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  // in every other case
+  double sigma; //stores the partial sums I need to implent the algorithm
+  int iterations = 0; //counts the iterations which are necessary to converge
+  std::vector<double> residual (b.size()); // declaring the residual
+  residual = vectorSub(b, multiplication(A, x_0));
+
+  std::cout << LinfNorm(residual) << std::endl;
+
+  while( LinfNorm(residual) > tol )
+  {
+      //std::cout << "dentro" << std::endl;
+      // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
+      for( unsigned int i=0; i<x_0.size(); ++i)
+      {
+        sigma = 0;
+        for( unsigned int j=0; j<A.getColSize(); ++j)
+        {
+          if( j != i)
+          {
+            sigma = sigma + A.getValue(i, j)*x_0.at(j);
+          }
+        }
+        x_0.at(i) = (b.at(i)-sigma)/(A.getValue(i, i));
+        //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
+      }
+      residual = vectorSub(b, multiplication(A, x_0));
+      iterations++;
+  }
+
+  for (unsigned int i = 0; i<x_0.size(); ++i)
+  {
+    std::cout << x_0.at(i) << std::endl;
+  }
+
+
 }

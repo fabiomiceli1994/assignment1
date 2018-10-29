@@ -38,7 +38,6 @@ public:
   double getValue (int x, int y) const; //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
   void printEntries (); //prints the entries in the order they are pushed in
-  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double> b, const SparseMatrix A, double tol, std::string FileName );
   //std::vector<double> inversion ( double a, double delta, double tol);
 
 private:
@@ -55,6 +54,7 @@ SparseMatrix operator*(double a, SparseMatrix A);
 std::vector<double> multiplication( const SparseMatrix& A, const std::vector<double> v);
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
 std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
-double LinfNorm ( std::vector<double> v );
+double LinfNorm ( std::vector<double> v ); //returns the maximum of a vector. In this case I use it to construct the LinfNorm
+void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const SparseMatrix& A, double tol, std::string Filename );
 
 #endif
