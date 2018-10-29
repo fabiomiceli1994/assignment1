@@ -105,8 +105,16 @@ SparseMatrix::~SparseMatrix()
 // }
 //
 //
-// SparseMatrix SparseMatrix::operator*(const double a) //scalar multiplication
+
+// SparseMatrix SparseMatrix::operator*(const std::vector<double> v) //matrix-vector product
 // {
+//   //checks consistency
+//   if( colSize != v.size() )
+//   {
+//     std::cout << "Error. Matrix rows do not match vector columns. Cannot define multiplication."<<std::endl;
+//     exit(EXIT_FAILURE);
+//   }
+//
 //   SparseMatrix temp = SparseMatrix( rowSize_, colSize_ );
 //     for( int i=0; i<rowSize_; i++)
 //     {
@@ -143,12 +151,12 @@ SparseMatrix::~SparseMatrix()
 //   return *this;
 // }
 
-int SparseMatrix::getRowSize () //returns the number of rows
+int SparseMatrix::getRowSize () const //returns the number of rows
 {
   return rowSize_;
 }
 
-int SparseMatrix::getColSize () //returns the number of columns
+int SparseMatrix::getColSize () const //returns the number of columns
 {
   return colSize_;
 }
@@ -194,7 +202,7 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
 }
 
 
-double SparseMatrix::getValue (int x, int y) //Get the value (x, y) in the real matrix. x is right even inthe actual ones
+double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the real matrix. x is right even inthe actual ones
 {
   if ( (*colsInd_).at(x) == 0 )
   {
@@ -264,6 +272,44 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
     std::cout << std::endl;
   }
 }
+
+
+
+void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double> b, const SparseMatrix& A, double tol, std::string Filename )
+{
+  //checks consistency of the matrix and vector sizes
+  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
+  {
+    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  // in every other case
+  double sigma; //stores the partial sums I need to implent the algorithm
+  int iterations = 0; //counts the iterations which are necessary to converge
+  std::vector<double> residual (b.size()); // declaring the residual
+  residual = vectorSub(b, multiplication(A, x_0));
+
+  while( LinfNorm(residual) > tol )
+  {
+      for( unsigned int i=0; i<x_0.size(); ++i)
+      {
+        sigma = 0;
+        for( unsigned int j=0; j<A.getColSize(); ++j)
+        {
+          if( j != i)
+          {
+            sigma = sigma + A.getValue(i, j)*x_0.at(i);
+          }
+        }
+        x_0.at(i) = (b.at(i)-sigma)/(A.getValue(i, i));
+      }
+      iterations++;
+  }
+
+
+}
+
 
 // std::vector<double> inversion ( double a, double delta, doubel tol)
 // {
@@ -340,3 +386,65 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 // // for(auto const& value: (*current_line_STAMPA_V)){
 // //  std::cout << "V: " << value << std::endl;
 // //  }
+
+std::vector<double> multiplication( const SparseMatrix& A, const std::vector<double> v)
+{
+  if( A.getColSize() != v.size() ) //checks consistency
+  {
+    std::cout << "Error. Multiplication of matrix and vector cannot be defined." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  std::vector<double> tmp ( A.getRowSize() ); // output vector. size = rows of matrix
+  double sums;
+  for( unsigned int i = 0; i<tmp.size(); ++i)
+  {
+    sums = 0;
+    for( unsigned int j = 0; j<A.getColSize(); ++j)
+    {
+      sums += A.getValue(i, j)*v.at(j);
+    }
+    tmp.at(i) = sums;
+  }
+  return tmp;
+}
+
+std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 )
+{
+  //checks consistency
+  if( v1.size() != v2.size() )
+  {
+    std::cout << "Error. Summing two vectors having different sizes." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  std::vector <double> tmp (v1.size());
+  for(unsigned int i=0; i<v1.size(); ++i)
+  {
+    tmp.at(i) = v1.at(i) + v2.at(i);
+  }
+  return tmp;
+}
+
+std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 )
+{
+  //checks consistency
+  if( v1.size() != v2.size() )
+  {
+    std::cout << "Error. Subtracting two vectors having different sizes." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  std::vector <double> tmp (v1.size());
+  for(unsigned int i=0; i<v1.size(); ++i)
+  {
+    tmp.at(i) = v1.at(i) - v2.at(i);
+  }
+  return tmp;
+}
+
+double LinfNorm ( std::vector<double> v )
+{
+  double max = *max_element(v.begin(), v.end());
+  return max;
+}

@@ -30,6 +30,12 @@ int main()
 
   std::cout << "\n\n" << std::endl;
 
+  mat_c.printMatrix();
+
+
+
+
+
 
 
  // Commento prova per git

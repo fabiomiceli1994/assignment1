@@ -26,17 +26,19 @@ public:
 
   //useful operators for the class
   SparseMatrix operator+(const SparseMatrix& A);
-  SparseMatrix operator*(const double a);
+  SparseMatrix operator*(const std::vector<double> v);
   SparseMatrix operator-( SparseMatrix& A);
   SparseMatrix& operator=(const SparseMatrix& source);
 
 
-  int getRowSize (); //gets the number of rows
-  int getColSize (); //gets the number of columns
+
+  int getRowSize () const; //gets the number of rows
+  int getColSize () const; //gets the number of columns
   void addEntry ( int rowNumb, int colNumb, double newValue); //adds an entry to the matrix in the location [rowNumb][colNumb]
-  double getValue (int x, int y); //return the element (x, y) of the real matrix
+  double getValue (int x, int y) const; //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
   void printEntries (); //prints the entries in the order they are pushed in
+  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double> b, const SparseMatrix A, double tol, std::string FileName );
   //std::vector<double> inversion ( double a, double delta, double tol);
 
 private:
@@ -47,7 +49,12 @@ private:
 
 };
 
+
 //multiplication by scalar. opposite order
 SparseMatrix operator*(double a, SparseMatrix A);
+std::vector<double> multiplication( const SparseMatrix& A, const std::vector<double> v);
+std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
+std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
+double LinfNorm ( std::vector<double> v );
 
 #endif
