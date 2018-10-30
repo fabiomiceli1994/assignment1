@@ -16,12 +16,12 @@ int main()
 {
 
   // SparseMatrix matrix = SparseMatrix (1);
-  SparseMatrix mat1 = SparseMatrix (101, 101);
-
-  mat1.addEntry(1, 5, 3.0);
-  mat1.addEntry(100, 100, 9.0);
-
-  mat1.addEntry(4, 3, 11.0);
+  // SparseMatrix mat1 = SparseMatrix (101, 101);
+  //
+  // mat1.addEntry(1, 5, 3.0);
+  // mat1.addEntry(100, 100, 9.0);
+  //
+  // mat1.addEntry(4, 3, 11.0);
 
   // mat1.printMatrix();
 
@@ -32,26 +32,31 @@ int main()
   //
   // mat_c.printMatrix();
 
-  SparseMatrix mat = SparseMatrix (3, 3);
-  mat.addEntry(0, 0, 2);
-  mat.addEntry(0, 1, -1);
-  mat.addEntry(0, 2, 0);
-  mat.addEntry(1, 0, -1);
-  mat.addEntry(1, 1, 2);
-  mat.addEntry(1, 2, -1);
-  mat.addEntry(2, 0, 0);
-  mat.addEntry(2, 1, -1);
-  mat.addEntry(2, 2, 2);
-  std::vector<double> b = {1, 1, 1};
-  std::vector<double> x_0 = {0, 0, 0};
-  std::vector<double> check = vectorSub(b, multiplication(mat, x_0));
-
-  // for(unsigned int i = 0; i<check.size(); ++i)
+  // SparseMatrix mat = SparseMatrix (3, 3);
+  // mat.addEntry(0, 0, 2);
+  // mat.addEntry(0, 1, -1);
+  // mat.addEntry(0, 2, 0);
+  // mat.addEntry(1, 0, -1);
+  // mat.addEntry(1, 1, 2);
+  // mat.addEntry(1, 2, -1);
+  // mat.addEntry(2, 0, 0);
+  // mat.addEntry(2, 1, -1);
+  // mat.addEntry(2, 2, 2);
+  // std::vector<double> b = {1, 1, 1};
+  // std::vector<double> x_0 = {2, 0, 1};
+  // std::vector<double> check = vectorSub(b, mat.multiplication(x_0));
+  //
+  // for( unsigned int i=0; i<check.size(); ++i)
   // {
-  //   std::cout << "check " << " " << check.at(i) << std::endl;
+  //   std::cout << "check[" << i << "] = " << check.at(i) << std::endl;
   // }
-
-Gauss_Seidel ( x_0, b, mat, 0.0001, "ciao" );
+  //
+  // // for(unsigned int i = 0; i<check.size(); ++i)
+  // // {
+  // //   std::cout << "check " << " " << check.at(i) << std::endl;
+  // // }
+  //
+  // mat.Gauss_Seidel ( x_0, b, 0.00000001, "ciao" );
 
 
 

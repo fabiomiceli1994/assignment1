@@ -317,15 +317,6 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 //   return A*a;
 // }
 
-
-
-
-
-
-
-
-
-
 // std::vector<int>* current_line_Indices   = colsInd_->at(rowNumb);
 // std::vector<double>* current_line_Values = rows_->at(rowNumb);
 //
@@ -354,29 +345,79 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 // //  std::cout << "V: " << value << std::endl;
 // //  }
 
-std::vector<double> multiplication( const SparseMatrix& A, const std::vector<double> v)
+
+//returns the result of the multiplication between a SparseMatrix and a std::vector
+std::vector<double> SparseMatrix::multiplication( const std::vector<double> v )
 {
-  if( A.getColSize() != v.size() ) //checks consistency
+  if( colSize_ != v.size() ) //checks consistency
   {
     std::cout << "Error. Multiplication of matrix and vector cannot be defined." << std::endl;
     exit(EXIT_FAILURE);
   }
 
-  std::vector<double> tmp ( A.getRowSize() ); // output vector. size = rows of matrix
+  std::vector<double> tmp ( rowSize_ ); // output vector. size = rows of matrix
   double sums;
-  for( unsigned int i = 0; i<tmp.size(); ++i)
+  for( unsigned int i = 0; i<rowSize_; ++i)
   {
     sums = 0;
-    for( unsigned int j = 0; j<A.getColSize(); ++j)
+    for( unsigned int j = 0; j<colSize_; ++j)
     {
-      sums += A.getValue(i, j)*v.at(j);
+      sums += getValue(i, j)*v.at(j);
     }
     tmp.at(i) = sums;
   }
   return tmp;
 }
 
-std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 )
+//Gauss Seidel algorithm
+void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, std::string Filename )
+{
+  //checks consistency of the matrix and vector sizes
+  if( ( rowSize_ != colSize_ ) || ( rowSize_ != x_0.size() ) || ( x_0.size() != b.size() ) )
+  {
+    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  // in every other case
+  double sigma; //stores the partial sums I need to implent the algorithm
+  int iterations = 0; //counts the iterations which are necessary to converge
+  std::vector<double> residual (b.size()); // declaring the residual
+  residual = vectorSub(b, multiplication(x_0));
+
+  std::cout << LinfNorm(residual) << std::endl;
+
+  while( LinfNorm(residual) > tol )
+  {
+      //std::cout << "dentro" << std::endl;
+      // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
+      for( unsigned int i=0; i<x_0.size(); ++i)
+      {
+        sigma = 0;
+        for( unsigned int j=0; j<colSize_; ++j)
+        {
+          if( j != i)
+          {
+            sigma += getValue(i, j)*x_0.at(j);
+          }
+        }
+        x_0.at(i) = (b.at(i)-sigma)/(getValue(i, i));
+        //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
+      }
+      residual = vectorSub(b, multiplication(x_0));
+      iterations++;
+  }
+
+  for (unsigned int i = 0; i<x_0.size(); ++i)
+  {
+    std::cout << x_0.at(i) << std::endl;
+  }
+
+
+}
+
+
+std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ) //sums two vectors
 {
   //checks consistency
   if( v1.size() != v2.size() )
@@ -393,7 +434,7 @@ std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 )
   return tmp;
 }
 
-std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 )
+std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ) //subtracts two vectors
 {
   //checks consistency
   if( v1.size() != v2.size() )
@@ -410,55 +451,9 @@ std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 )
   return tmp;
 }
 
-double LinfNorm ( std::vector<double> v )
+double LinfNorm ( std::vector<double> v ) //LinfNorm of a vector
 {
   double M1 = *max_element(v.begin(), v.end());
   double M2 = fabs(*min_element(v.begin(), v.end()));
   return  std::max(M1, M2);
-}
-
-void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const SparseMatrix& A, double tol, std::string Filename )
-{
-  //checks consistency of the matrix and vector sizes
-  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
-  {
-    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  // in every other case
-  double sigma; //stores the partial sums I need to implent the algorithm
-  int iterations = 0; //counts the iterations which are necessary to converge
-  std::vector<double> residual (b.size()); // declaring the residual
-  residual = vectorSub(b, multiplication(A, x_0));
-
-  std::cout << LinfNorm(residual) << std::endl;
-
-  while( LinfNorm(residual) > tol )
-  {
-      //std::cout << "dentro" << std::endl;
-      // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
-      for( unsigned int i=0; i<x_0.size(); ++i)
-      {
-        sigma = 0;
-        for( unsigned int j=0; j<A.getColSize(); ++j)
-        {
-          if( j != i)
-          {
-            sigma = sigma + A.getValue(i, j)*x_0.at(j);
-          }
-        }
-        x_0.at(i) = (b.at(i)-sigma)/(A.getValue(i, i));
-        //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
-      }
-      residual = vectorSub(b, multiplication(A, x_0));
-      iterations++;
-  }
-
-  for (unsigned int i = 0; i<x_0.size(); ++i)
-  {
-    std::cout << x_0.at(i) << std::endl;
-  }
-
-
 }

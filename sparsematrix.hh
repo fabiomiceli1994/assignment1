@@ -39,6 +39,8 @@ public:
   void printMatrix (); //prints the matrix
   void printEntries (); //prints the entries in the order they are pushed in
   //std::vector<double> inversion ( double a, double delta, double tol);
+  std::vector<double> multiplication( const std::vector<double> v );
+  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, double tol, std::string Filename );
 
 private:
   int rowSize_; //number of rows of the matrix
@@ -51,10 +53,9 @@ private:
 
 //multiplication by scalar. opposite order
 SparseMatrix operator*(double a, SparseMatrix A);
-std::vector<double> multiplication( const SparseMatrix& A, const std::vector<double> v);
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
 std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
 double LinfNorm ( std::vector<double> v ); //returns the maximum of a vector. In this case I use it to construct the LinfNorm
-void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const SparseMatrix& A, double tol, std::string Filename );
+
 
 #endif
