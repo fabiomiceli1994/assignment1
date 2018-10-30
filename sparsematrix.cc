@@ -69,7 +69,7 @@ SparseMatrix::SparseMatrix(const SparseMatrix& source )
   }
 }
 
-//descructor
+//destructor
 SparseMatrix::~SparseMatrix()
 {}
 
@@ -307,16 +307,16 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 //     }
 //   }
 // }
-
-
-
+//
+//
+//
 //
 // //multiplication by a scalar, opposite order
 // SparseMatrix operator*(double a, SparseMatrix A)
 // {
 //   return A*a;
 // }
-
+//
 // std::vector<int>* current_line_Indices   = colsInd_->at(rowNumb);
 // std::vector<double>* current_line_Values = rows_->at(rowNumb);
 //
@@ -370,7 +370,7 @@ std::vector<double> SparseMatrix::multiplication( const std::vector<double> v )
 }
 
 //Gauss Seidel algorithm
-void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, std::string Filename )
+void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck )
 {
   //checks consistency of the matrix and vector sizes
   if( ( rowSize_ != colSize_ ) || ( rowSize_ != x_0.size() ) || ( x_0.size() != b.size() ) )
@@ -383,11 +383,24 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   double sigma; //stores the partial sums I need to implent the algorithm
   int iterations = 0; //counts the iterations which are necessary to converge
   std::vector<double> residual (b.size()); // declaring the residual
-  residual = vectorSub(b, multiplication(x_0));
+  residual = vectorSub(b, multiplication(x_0)); //computing it
 
-  std::cout << LinfNorm(residual) << std::endl;
+  // std::cout << LinfNorm(residual) << std::endl;
 
-  while( LinfNorm(residual) > tol )
+  double resMaxNorm = LinfNorm(residual); // maximum norm of the residual
+  double resMaxNorm_check = resMaxNorm ; // I will use it to check the algorithm doesnt get stuck
+
+  std::string Filename = "Size_" + std::to_string (getRowSize());
+  std::cout << Filename << std::endl;
+
+  std::ofstream myOutFile (Filename + ".txt");
+  if ( !myOutFile.good() )
+  {
+    std::cout << "Failed to open the file." <<std::endl;
+  }
+
+
+  while( resMaxNorm > tol )
   {
       //std::cout << "dentro" << std::endl;
       // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
@@ -404,16 +417,30 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
         x_0.at(i) = (b.at(i)-sigma)/(getValue(i, i));
         //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
       }
-      residual = vectorSub(b, multiplication(x_0));
-      iterations++;
+      residual = vectorSub(b, multiplication(x_0)); //updating residual
+      resMaxNorm = LinfNorm(residual); //updating the maxNorm
+      iterations++; //counting the iterations
+      if( (iterations % itCheck) == 0 ) //every itCheck iterations, checks that the algorithm hasn't got stuck
+      {
+        //std::cout << "dentro" << std::endl;
+        if( resMaxNorm >= resMaxNorm_check ) //if the error stays the same of gets bigger the algorithm has to be stopped, since this a necessary condition for convergence
+        {
+          std::cout << "Gauss-Seidel algorithm has been stopped. Convergence cannot be reached." << std::endl;
+          exit(EXIT_FAILURE);
+        }else
+        {
+          //std::cout << "dentro2" << std::endl;
+          resMaxNorm_check = resMaxNorm;
+        }
+      }
   }
 
   for (unsigned int i = 0; i<x_0.size(); ++i)
   {
-    std::cout << x_0.at(i) << std::endl;
+    myOutFile << x_0.at(i) << std::endl;
   }
 
-
+  myOutFile.close();
 }
 
 

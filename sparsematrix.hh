@@ -40,7 +40,7 @@ public:
   void printEntries (); //prints the entries in the order they are pushed in
   //std::vector<double> inversion ( double a, double delta, double tol);
   std::vector<double> multiplication( const std::vector<double> v );
-  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, double tol, std::string Filename );
+  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck );
 
 private:
   int rowSize_; //number of rows of the matrix
