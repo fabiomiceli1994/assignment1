@@ -56,7 +56,7 @@ int main()
   //   std::cout << "check " << " " << check.at(i) << std::endl;
   // }
 
-  mat.Gauss_Seidel ( x_0, b, 0.00000001, 10 );
+  mat.Gauss_Seidel ( x_0, b, 0.00000001, 10, "Size_");
 
 
 

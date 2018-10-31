@@ -278,36 +278,7 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 
 
 
-// std::vector<double> inversion ( double a, double delta, doubel tol)
-// {
-//   std::vector<double> w (rowSize_, 0); //vector w required by the assignment
-//   std::vector<double> D(rowSize_, 0); //vector D required by the assignment
-//   double delta = 1; //delta. Da rivedere per renderlo migliore. Funzione di controllo sulla positivita di delta: aggiungere.
-//   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
-//
-//   for( int i=0; i<rowSize_; i++) //initialising w[i] and D[i]
-//   {
-//     for( int j=0; j<colSize_; j++)
-//     {
-//       w[i] = (i+1)/(rowSize_+1);
-//       D[i] = a*(w[i]-0.5)*(w[i]-0.5)+delta;
-//       if( (i-1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i-1] );
-//       }else if( i == j )
-//       {
-//         (*this).addEntry( i, j, D[i] + D[i-1] );
-//       }else if( (i+1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i] );
-//       }else
-//       {
-//         (*this).addEntry( i, j, 0 );
-//       }
-//     }
-//   }
-// }
-//
+
 //
 //
 //
@@ -370,7 +341,7 @@ std::vector<double> SparseMatrix::multiplication( const std::vector<double> v )
 }
 
 //Gauss Seidel algorithm
-void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck )
+void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck, std::string fileName )
 {
   //checks consistency of the matrix and vector sizes
   if( ( rowSize_ != colSize_ ) || ( rowSize_ != x_0.size() ) || ( x_0.size() != b.size() ) )
@@ -390,7 +361,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   double resMaxNorm = LinfNorm(residual); // maximum norm of the residual
   double resMaxNorm_check = resMaxNorm ; // I will use it to check the algorithm doesnt get stuck
 
-  std::string Filename = "Size_" + std::to_string (getRowSize());
+  std::string Filename = fileName + std::to_string (getRowSize());
   std::cout << Filename << std::endl;
 
   std::ofstream myOutFile (Filename + ".txt");
@@ -442,6 +413,35 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
 
   myOutFile.close();
 }
+// std::vector<double> inversion ( double a, double delta, doubel tol)
+// {
+//   std::vector<double> w (rowSize_, 0); //vector w required by the assignment
+//   std::vector<double> D(rowSize_, 0); //vector D required by the assignment
+//   double delta = 1; //delta. Da rivedere per renderlo migliore. Funzione di controllo sulla positivita di delta: aggiungere.
+//   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
+//
+//   for( int i=0; i<rowSize_; i++) //initialising w[i] and D[i]
+//   {
+//     for( int j=0; j<colSize_; j++)
+//     {
+//       w[i] = (i+1)/(rowSize_+1);
+//       D[i] = a*(w[i]-0.5)*(w[i]-0.5)+delta;
+//       if( (i-1) == j )
+//       {
+//         (*this).addEntry( i, j, -D[i-1] );
+//       }else if( i == j )
+//       {
+//         (*this).addEntry( i, j, D[i] + D[i-1] );
+//       }else if( (i+1) == j )
+//       {
+//         (*this).addEntry( i, j, -D[i] );
+//       }else
+//       {
+//         (*this).addEntry( i, j, 0 );
+//       }
+//     }
+//   }
+// }
 
 
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ) //sums two vectors
