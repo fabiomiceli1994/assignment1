@@ -56,13 +56,12 @@ int main()
   //   std::cout << "check " << " " << check.at(i) << std::endl;
   // }
 
-  SparseMatrix mat = SparseMatrix (10, 10);
+  SparseMatrix mat = SparseMatrix (500, 500);
   std::vector<double> x_0 (mat.getRowSize());
   std::vector<double> b (mat.getRowSize());
 
-  BuildTest (1, mat, b, x_0 );
+  Gauss_Seidel_test (1., mat, x_0, b, 1e-3, 10000, "GS_", 1e6);
 
-  mat.printMatrix();
 
   // for(unsigned int i = 0; i<x_0.size(); ++i)
   // {

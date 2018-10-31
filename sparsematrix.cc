@@ -318,7 +318,7 @@ void SparseMatrix::printEntries () //prints the entries in the order they are pu
 
 
 //returns the result of the multiplication between a SparseMatrix and a std::vector
-std::vector<double> SparseMatrix::multiplication( const std::vector<double> v )
+std::vector<double> SparseMatrix::multiplication( const std::vector<double> v ) const
 {
   if( colSize_ != v.size() ) //checks consistency
   {
@@ -341,7 +341,7 @@ std::vector<double> SparseMatrix::multiplication( const std::vector<double> v )
 }
 
 //Gauss Seidel algorithm
-void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck, std::string fileName )
+void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter )
 {
   //checks consistency of the matrix and vector sizes
   if( ( rowSize_ != colSize_ ) || ( rowSize_ != x_0.size() ) || ( x_0.size() != b.size() ) )
@@ -378,7 +378,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   myOutFile.width(25);
   myOutFile << std::left << "3-iterations"  << std::endl;
 
-  while( resMaxNorm > tol )
+  while( (resMaxNorm > tol) && (iterations<=MaxIter) )
   {
       //std::cout << "dentro" << std::endl;
       // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
@@ -392,8 +392,14 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
             sigma += getValue(i, j)*x_0.at(j);
           }
         }
-        x_0.at(i) = (b.at(i)-sigma)/(getValue(i, i));
-        //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
+        if(getValue(i, i)!=0)
+        {
+          x_0.at(i) = (b.at(i)-sigma)/(getValue(i, i));
+        }else
+        {
+          std::cout << "One of the elements on the diagonal of A is zero. Cannot use the algorithm. Exiting the program." << std::endl;
+          exit(EXIT_FAILURE);
+        }
       }
       residual = vectorSub(b, multiplication(x_0)); //updating residual
       resMaxNorm = LinfNorm(residual); //updating the maxNorm
@@ -434,132 +440,6 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
 }
 
 
-
-
-
-
-//Gauss Seidel algorithm testing function
-// void SparseMatrix::Gauss_Seidel_test( double a, double delta, double tol, int itCheck, std::string fileName  )
-// {
-//   //checks consistency of the matrix and vector sizes
-//   if( ( rowSize_ != colSize_ ) || ( rowSize_ != x_0.size() ) || ( x_0.size() != b.size() ) )
-//   {
-//     std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
-//     exit(EXIT_FAILURE);
-//   }
-//
-//   // in every other case
-//   double sigma; //stores the partial sums I need to implent the algorithm
-//   int iterations = 0; //counts the iterations which are necessary to converge
-//   std::vector<double> residual (b.size()); // declaring the residual
-//   residual = vectorSub(b, multiplication(x_0)); //computing it
-//
-//   // std::cout << LinfNorm(residual) << std::endl;
-//
-//   double resMaxNorm = LinfNorm(residual); // maximum norm of the residual
-//   double resMaxNorm_check = resMaxNorm ; // I will use it to check the algorithm doesnt get stuck
-//
-//   std::string Filename = fileName + std::to_string (getRowSize());
-//   //std::cout << Filename << std::endl;
-//
-//   std::ofstream myOutFile (Filename + ".txt");
-//   if ( !myOutFile.good() )
-//   {
-//     std::cout << "Failed to open the file." <<std::endl;
-//   }
-//
-//   myOutFile << "#Solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is " << getRowSize() << "x" << getColSize() << " matrix. x and b are " << b.size() << "vectors." << std::endl;
-//   myOutFile.width(15);
-//   myOutFile << std::left << "# 1-x" ;
-//   myOutFile.width(25);
-//   myOutFile << std::left << "2-residual (LinfNorm)" ;
-//   myOutFile.width(25);
-//   myOutFile << std::left << "3-iterations"  << std::endl;
-//
-//   while( resMaxNorm > tol )
-//   {
-//       //std::cout << "dentro" << std::endl;
-//       // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
-//       for( unsigned int i=0; i<x_0.size(); ++i)
-//       {
-//         sigma = 0;
-//         for( unsigned int j=0; j<colSize_; ++j)
-//         {
-//           if( j != i)
-//           {
-//             sigma += getValue(i, j)*x_0.at(j);
-//           }
-//         }
-//         x_0.at(i) = (b.at(i)-sigma)/(getValue(i, i));
-//         //std::cout << "x_0(" << i << ") = " << "" << x_0.at(i) << std::endl;
-//       }
-//       residual = vectorSub(b, multiplication(x_0)); //updating residual
-//       resMaxNorm = LinfNorm(residual); //updating the maxNorm
-//       iterations++; //counting the iterations
-//       if( (iterations % itCheck) == 0 ) //every itCheck iterations, checks that the algorithm hasn't got stuck
-//       {
-//         //std::cout << "dentro" << std::endl;
-//         if( resMaxNorm >= resMaxNorm_check ) //if the error stays the same of gets bigger the algorithm has to be stopped, since this a necessary condition for convergence
-//         {
-//           std::cout << "Gauss-Seidel algorithm has been stopped. Convergence cannot be reached." << std::endl;
-//           exit(EXIT_FAILURE);
-//         }else
-//         {
-//           //std::cout << "dentro2" << std::endl;
-//           resMaxNorm_check = resMaxNorm;
-//         }
-//       }
-//   }
-//
-//   for (unsigned int i = 0; i<x_0.size(); ++i)
-//   {
-//     if( i==0 )
-//     {
-//       myOutFile.width(15);
-//       myOutFile << std::left << x_0.at(i) ;
-//       myOutFile.width(25);
-//       myOutFile << std::left << resMaxNorm;
-//       myOutFile.width(25);
-//       myOutFile << std::left << iterations << std::endl;
-//     }else
-//     {
-//       std::cout.width(15);
-//       myOutFile << std::left << x_0.at(i) << std::endl;
-//     }
-//   }
-//
-//   myOutFile.close();
-// }
-
-// std::vector<double> inversion ( double a, double delta, doubel tol)
-// {
-//   std::vector<double> w (rowSize_, 0); //vector w required by the assignment
-//   std::vector<double> D(rowSize_, 0); //vector D required by the assignment
-//   double delta = 1; //delta. Da rivedere per renderlo migliore. Funzione di controllo sulla positivita di delta: aggiungere.
-//   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
-//
-//   for( int i=0; i<rowSize_; i++) //initialising w[i] and D[i]
-//   {
-//     for( int j=0; j<colSize_; j++)
-//     {
-//       w[i] = (i+1)/(rowSize_+1);
-//       D[i] = a*(w[i]-0.5)*(w[i]-0.5)+delta;
-//       if( (i-1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i-1] );
-//       }else if( i == j )
-//       {
-//         (*this).addEntry( i, j, D[i] + D[i-1] );
-//       }else if( (i+1) == j )
-//       {
-//         (*this).addEntry( i, j, -D[i] );
-//       }else
-//       {
-//         (*this).addEntry( i, j, 0 );
-//       }
-//     }
-//   }
-// }
 
 
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ) //sums two vectors
@@ -603,12 +483,13 @@ double LinfNorm ( std::vector<double> v ) //LinfNorm of a vector
   return  std::max(M1, M2);
 }
 
-void BuildTest ( double delta, SparseMatrix& A, std::vector<double>& b, std::vector<double>& x_0)
+//Gauss Seidel algorithm testing function
+void Gauss_Seidel_test( double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter)
 {
-  //checking consistency
-  if( ( b.size() != x_0.size() ) || ( b.size() != A.getColSize()) || ( A.getRowSize() != A.getColSize() ) )
+  //checks consistency of the matrix and vector sizes
+  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
   {
-    std::cout << "Vectors and matrix size not matching. Cannot initialise the testing." << std::endl;
+    std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -623,11 +504,12 @@ void BuildTest ( double delta, SparseMatrix& A, std::vector<double>& b, std::vec
 
   for( int i=0; i<A.getRowSize(); i++) //initialising w[i], D[i] and A
   {
+    w.at(i) = (i+1.)/(A.getRowSize()+1);
+    std::cout << w.at(i) << std::endl;
+    x_0.at(i) = 0;
+    b.at(i) = -2*a*(w.at(i)-0.5)*w.at(0)*w.at(0);
     for( int j=0; j<A.getColSize(); j++)
     {
-      w.at(i) = (i+1)/(A.getRowSize()+1);
-      x_0.at(i) = 0;
-      b.at(i) = -2*a*(w.at(i)-0.5)*w.at(0)*w.at(0);
       if( (i-1) == j )
       {
         A.addEntry( i, j, -D.at(i) );
@@ -644,4 +526,96 @@ void BuildTest ( double delta, SparseMatrix& A, std::vector<double>& b, std::vec
     }
   }
   b.at(b.size()-1) += 1;
+
+  //A.printMatrix();
+
+  // in every other case
+  double sigma; //stores the partial sums I need to implent the algorithm
+  int iterations = 0; //counts the iterations which are necessary to converge
+  std::vector<double> residual (b.size()); // declaring the residual
+  residual = vectorSub(b, A.multiplication(x_0)); //computing it
+
+  // std::cout << LinfNorm(residual) << std::endl;
+
+  double resMaxNorm = LinfNorm(residual); // maximum norm of the residual
+  double resMaxNorm_check = resMaxNorm ; // I will use it to check the algorithm doesnt get stuck
+
+  std::string Filename = fileName + std::to_string (A.getRowSize());
+  //std::cout << Filename << std::endl;
+
+  std::ofstream myOutFile (Filename + ".txt");
+  if ( !myOutFile.good() )
+  {
+    std::cout << "Failed to open the file." <<std::endl;
+  }
+
+  myOutFile << "#Outputting the error for the solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is " << A.getRowSize() << "x" << A.getColSize() << " matrix. x and b are " << b.size() << "vectors." << std::endl;
+  myOutFile.width(15);
+  myOutFile << std::left << "# 1-Error" << std::endl;
+
+  while( (resMaxNorm > tol) && (iterations<=MaxIter) )
+  {
+      //std::cout << "dentro" << std::endl;
+      // std::cout << "# " << " " << iterations << "residual > tol" << std::endl;
+      for( unsigned int i=0; i<x_0.size(); ++i)
+      {
+        sigma = 0;
+        for( unsigned int j=0; j<A.getColSize(); ++j)
+        {
+          if( j != i)
+          {
+            sigma += A.getValue(i, j)*x_0.at(j);
+          }
+        }
+        if(A.getValue(i, i)!=0)
+        {
+          x_0.at(i) = (b.at(i)-sigma)/(A.getValue(i, i));
+        }else
+        {
+          std::cout << "One of the elements on the diagonal of A is zero. Cannot use the algorithm. Exiting the program." << std::endl;
+          exit(EXIT_FAILURE);
+        }
+      }
+      residual = vectorSub(b, A.multiplication(x_0)); //updating residual
+      resMaxNorm = LinfNorm(residual); //updating the maxNorm
+      iterations++; //counting the iterations
+      if( (iterations % itCheck) == 0 ) //every itCheck iterations, checks that the algorithm hasn't got stuck
+      {
+        //std::cout << "dentro" << std::endl;
+        if( resMaxNorm >= resMaxNorm_check ) //if the error stays the same of gets bigger the algorithm has to be stopped, since this a necessary condition for convergence
+        {
+          std::cout << "Gauss-Seidel algorithm has been stopped. Convergence cannot be reached." << std::endl;
+          exit(EXIT_FAILURE);
+        }else
+        {
+          //std::cout << "dentro2" << std::endl;
+          resMaxNorm_check = resMaxNorm;
+        }
+      }
+  }
+
+  for (unsigned int i = 0; i<x_0.size(); ++i)
+  {
+    if( i==0 )
+    {
+      myOutFile.width(15);
+      myOutFile << std::left << x_0.at(i) ;
+      myOutFile.width(25);
+      myOutFile << std::left << resMaxNorm;
+      myOutFile.width(25);
+      myOutFile << std::left << iterations << std::endl;
+    }else
+    {
+      std::cout.width(15);
+      myOutFile << std::left << x_0.at(i) << std::endl;
+    }
+  }
+
+  myOutFile.close();
+
+  // myOutFile.width(15);
+  // myOutFile << std::left << LinfNorm(vectorSub(w, x_0)) << std::endl ;
+  // myOutFile << std::left << resMaxNorm << std::endl ;
+  // myOutFile.close();
+
 }

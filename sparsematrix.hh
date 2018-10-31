@@ -38,10 +38,9 @@ public:
   double getValue (int x, int y) const; //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
   void printEntries (); //prints the entries in the order they are pushed in
-  std::vector<double> multiplication( const std::vector<double> v ); //matrix vector multiplication
-  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, double tol, int itCheck, std::string fileName );//Gauss_Seidel
+  std::vector<double> multiplication( const std::vector<double> v ) const; //matrix vector multiplication
+  void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter ); //Gauss_Seidel
 
-  //void Gauss_Seidel_test( double a, double delta, double tol, int itCheck, std::string fileName ); //function for testing Gauss_Seidel
   //void inversion ( double a, double delta, double tol);
 
 
@@ -59,6 +58,8 @@ SparseMatrix operator*(double a, SparseMatrix A);
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
 std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
 double LinfNorm ( std::vector<double> v ); //returns the maximum of a vector. In this case I use it to construct the LinfNorm
-void BuildTest ( double delta, SparseMatrix& A, std::vector<double>& b, std::vector<double>& x_0);
+void Gauss_Seidel_test( double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); //function for testing Gauss_Seidel
+
+
 
 #endif
