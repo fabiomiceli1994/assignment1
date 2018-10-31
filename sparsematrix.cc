@@ -362,7 +362,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   double resMaxNorm_check = resMaxNorm ; // I will use it to check the algorithm doesnt get stuck
 
   std::string Filename = fileName + std::to_string (getRowSize());
-  std::cout << Filename << std::endl;
+  //std::cout << Filename << std::endl;
 
   std::ofstream myOutFile (Filename + ".txt");
   if ( !myOutFile.good() )
@@ -370,6 +370,13 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
     std::cout << "Failed to open the file." <<std::endl;
   }
 
+  myOutFile << "#Solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is " << getRowSize() << "x" << getColSize() << " matrix. x and b are " << b.size() << "vectors." << std::endl;
+  myOutFile.width(15);
+  myOutFile << std::left << "# 1-x" ;
+  myOutFile.width(25);
+  myOutFile << std::left << "2-residual (LinfNorm)" ;
+  myOutFile.width(25);
+  myOutFile << std::left << "3-iterations"  << std::endl;
 
   while( resMaxNorm > tol )
   {
@@ -408,7 +415,19 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
 
   for (unsigned int i = 0; i<x_0.size(); ++i)
   {
-    myOutFile << x_0.at(i) << std::endl;
+    if( i==0 )
+    {
+      myOutFile.width(15);
+      myOutFile << std::left << x_0.at(i) ;
+      myOutFile.width(25);
+      myOutFile << std::left << resMaxNorm;
+      myOutFile.width(25);
+      myOutFile << std::left << iterations << std::endl;
+    }else
+    {
+      std::cout.width(15);
+      myOutFile << std::left << x_0.at(i) << std::endl;
+    }
   }
 
   myOutFile.close();

@@ -1,0 +1,5 @@
+#Solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is 3x3 matrix. x and b are 3vectors.
+# 1-x          2-residual (LinfNorm)    3-iterations             
+0.25           7.45058e-09              27                       
+0.5
+0.75
