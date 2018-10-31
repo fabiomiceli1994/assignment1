@@ -613,31 +613,35 @@ void BuildTest ( double delta, SparseMatrix& A, std::vector<double>& b, std::vec
   }
 
   std::vector<double> w (A.getRowSize()); //vector w required by the assignment
-  std::vector<double> D(A.getRowSize()); //vector D required by the assignment
+  std::vector<double> D(A.getRowSize()+1); //vector D required by the assignment
   double a = 4*(1-delta); //a. Da rivedere per renderlo migliore
+
+  for(unsigned int i=0; i<D.size(); ++i)
+  {
+    D.at(i) = a*(w[i]-0.5)*(w[i]-0.5)+delta;
+  }
 
   for( int i=0; i<A.getRowSize(); i++) //initialising w[i], D[i] and A
   {
     for( int j=0; j<A.getColSize(); j++)
     {
       w.at(i) = (i+1)/(A.getRowSize()+1);
-      D.at(i) = a*(w[i]-0.5)*(w[i]-0.5)+delta;
       x_0.at(i) = 0;
       b.at(i) = -2*a*(w.at(i)-0.5)*w.at(0)*w.at(0);
       if( (i-1) == j )
       {
-        A.addEntry( i, j, -D[i-1] );
+        A.addEntry( i, j, -D.at(i) );
       }else if( i == j )
       {
-        A.addEntry( i, j, D[i] + D[i-1] );
+        A.addEntry( i, j, D.at(i+1) + D.at(i) );
       }else if( (i+1) == j )
       {
-        A.addEntry( i, j, -D[i] );
+        A.addEntry( i, j, -D.at(i+1) );
       }else
       {
         A.addEntry( i, j, 0 );
       }
     }
   }
-  b.at(b.size()-1) += 1; 
+  b.at(b.size()-1) += 1;
 }
