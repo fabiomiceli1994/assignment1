@@ -1,0 +1,22 @@
+#!/bin/bash
+reset
+set terminal pdf
+set output 'Gauss_Seidel_lambda.pdf'
+set logscale xy
+set key right top
+set yrange [0.00000000005:10**13]
+set xlabel "Iterations (logscale)"
+set ylabel "Residual error in MaxNorm (logscale)"
+plot 'd_1.000000_l_0.000000_GSResidual_100.txt' using 1:2 w l  title "{/Symbol l}=0", \
+     'd_1.000000_l_1.000000_GSResidual_100.txt' using 1:2 w l  title "{/Symbol l}=1", \
+     'd_1.000000_l_10.000000_GSResidual_100.txt' using 1:2 w l title "{/Symbol l}=10", \
+     'd_1.000000_l_50.000000_GSResidual_100.txt' using 1:2 w l title "{/Symbol l}=50", \
+     'd_1.000000_l_100.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol l}=100", \
+     'd_1.000000_l_500.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol l}=500", \
+     'd_1.000000_l_1000.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol l}=1000", \
+     'd_1.000000_l_5000.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol l}=5000", \
+     'd_1.000000_l_10000.000000_GSResidual_100.txt' using 1:2 w l lt 13  lc 'green' title "{/Symbol l}=10000", \
+     'd_1.000000_l_50000.000000_GSResidual_100.txt' using 1:2 w l lt 13  lc 'blue' title "{/Symbol l}=50000", \
+     'd_1.000000_l_100000.000000_GSResidual_100.txt' using 1:2 w l lt 13  lc 'red' title "{/Symbol l}=100000", \
+
+quit

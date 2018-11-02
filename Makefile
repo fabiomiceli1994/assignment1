@@ -1,13 +1,22 @@
 # generated files
+PLOTSCRIPTS=plotscript_delta.gpl plotscript_lambda.gpl
+#RESULTS=d_1.000000_l_0.000000_GSResidual_100.txt d_1.000000_l_1.000000_GSResidual_100.txt d_1.000000_l_10.000000_GSResidual_100.txt d_1.000000_l_50.000000_GSResidual_100.txt d_1.000000_l_100.000000_GSResidual_100.txt d_1.000000_l_500.000000_GSResidual_100.txt d_1.000000_l_1000.000000_GSResidual_100.txt d_1.000000_l_0.000000_GSResidual_100.txt d_10.000000_l_0.000000_GSResidual_100.txt d_50.000000_l_0.000000_GSResidual_100.txt d_100.000000_l_0.000000_GSResidual_100.txt d_500.000000_l_0.000000_GSResidual_100.txt d_1000.000000_l_0.000000_GSResidual_100.txt
 RESULTS=result.dat
 PROGRAM=sparsematrix
 OBJS=main.o sparsematrix.o
+PLOTS=Gauss_Seidel_delta.pdf Gauss_Seidel_lambda.pdf
 
 # additional variables
 CPPFLAGS=-std=c++11
 
 
-all: $(RESULTS)
+all: $(PLOTS)
+
+
+$(PLOTS): $(RESULTS) $(PLOTSCRIPTS)
+	gnuplot plotscript_delta.gpl
+	gnuplot plotscript_lambda.gpl
+
 
 $(RESULTS): $(PROGRAM)
 	./$(PROGRAM)

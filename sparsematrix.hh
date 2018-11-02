@@ -39,7 +39,9 @@ public:
   void printMatrix (); //prints the matrix
   void printEntries (); //prints the entries in the order they are pushed in
   std::vector<double> multiplication( const std::vector<double> v ) const; //matrix vector multiplication
+  // void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, const int MaxIter ); //Gauss_Seidel
   void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter ); //Gauss_Seidel
+
 
   //void inversion ( double a, double delta, double tol);
 
@@ -58,8 +60,8 @@ SparseMatrix operator*(double a, SparseMatrix A);
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
 std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
 double LinfNorm ( std::vector<double> v ); //returns the maximum of a vector. In this case I use it to construct the LinfNorm
-void Gauss_Seidel_test( double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); //function for testing Gauss_Seidel
-
-
+void Gauss_Seidel_test( double lambda, double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, const int MaxIter); //function for testing Gauss_Seidel
+void Gauss_Seidel_delta( double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); //varying deltas for testing
+void Gauss_Seidel_lambda( double lambda, double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); // updating differently the diagonal part to test the algorithm
 
 #endif

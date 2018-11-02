@@ -1,0 +1,20 @@
+#!/bin/bash
+reset
+set terminal pdf
+set output 'Gauss_Seidel_delta.pdf'
+set logscale xy
+set key left bottom
+set yrange [0.00000001:100]
+set xlabel "Iterations (logscale)"
+set ylabel "Residual error in MaxNorm (logscale)"
+plot 'd_1.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=1", \
+     'd_10.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=10", \
+     'd_50.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=50", \
+     'd_100.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=100", \
+     'd_500.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=500", \
+     'd_1000.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=1000", \
+     'd_5000.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=5000", \
+     'd_10000.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=10000", \
+     'd_50000.000000_l_0.000000_GSResidual_100.txt' using 1:2 w l lt 13  lc 'blue' title "{/Symbol d}=50000", \
+     'd_100000.000000_l_0.000000_GSResidual_100.txt' using 1:2 w l lt 13 lc 'red' title "{/Symbol d}=100000",
+quit
