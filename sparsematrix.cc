@@ -150,7 +150,7 @@ double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the
   std::vector<int> curr_row = (*(*colsInd_).at(x)); // copying the x-th vector of colsInd in curr_row
 
   // find y in row
-  std::vector<int>::iterator it;
+  //std::vector<int>::iterator it;
   //std::find finds y in the given vector. y is the column index of the big matrix. But I have to find the column index of colsInd_ containing y
   //to find the position I use std::distance
   ptrdiff_t position = std::distance(curr_row.begin(),  std::find (curr_row.begin(), curr_row.end(), y));
