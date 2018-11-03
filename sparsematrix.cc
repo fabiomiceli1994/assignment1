@@ -97,17 +97,17 @@ std::vector<double> SparseMatrix::operator*( const std::vector<double>& input ) 
   return tmp;
 }
 
-int SparseMatrix::getRowSize () const //returns the number of rows
+unsigned int SparseMatrix::getRowSize () const //returns the number of rows
 {
   return rowSize_;
 }
 
-int SparseMatrix::getColSize () const //returns the number of columns
+unsigned int SparseMatrix::getColSize () const //returns the number of columns
 {
   return colSize_;
 }
 
-void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds an entry to the matrix in the location [rowNumb][colNumb]
+void SparseMatrix::addEntry ( unsigned int rowNumb, unsigned int colNumb, double newValue ) //adds an entry to the matrix in the location [rowNumb][colNumb]
 {
 
   if( (rowNumb<=rowSize_) && (colNumb<=colSize_) && (rowNumb>=0) && (colNumb>=0) ) //checking consistency of the request
@@ -116,19 +116,21 @@ void SparseMatrix::addEntry ( int rowNumb, int colNumb, double newValue ) //adds
     std::vector<int>* current_line_Indices   = colsInd_->at(rowNumb); //assigning the reference of rowNumb of colsInd to a vector of pointers representing the line of the indices matrix I am currently looking at
     std::vector<double>* current_line_Values = rows_->at(rowNumb); //assigning the reference of rowNumb of rows to a vector of pointers representing the line of the entries matrix I am currently looking at
 
-    if( current_line_Indices == 0 ) //if 0 I have not accessed the line before
+    if(newValue != 0)
     {
+      if( current_line_Indices == 0 ) //if 0 I have not accessed the line before
+      {
 
-      (*colsInd_)[rowNumb] = new std::vector<int>(1, colNumb); //dynamically puts a vector of size 1 and value colNumb in the row rowNumb of the indices matrix
-      (*rows_)[rowNumb] = new std::vector<double>(1, newValue); //dynamically puts a vector of size 1 and value newValue in the row rowNumb of the enties matrix
+        (*colsInd_)[rowNumb] = new std::vector<int>(1, colNumb); //dynamically puts a vector of size 1 and value colNumb in the row rowNumb of the indices matrix
+        (*rows_)[rowNumb] = new std::vector<double>(1, newValue); //dynamically puts a vector of size 1 and value newValue in the row rowNumb of the enties matrix
 
+      }
+      else // Every other time, i.e. if I have accessed the line before
+      {
+        current_line_Indices->push_back(colNumb); //adds the index through a pushback
+        current_line_Values->push_back(newValue); //adds the entry through a pushback
+      }
     }
-    else // Every other time, i.e. if I have accessed the line before
-    {
-      current_line_Indices->push_back(colNumb); //adds the index through a pushback
-      current_line_Values->push_back(newValue); //adds the entry through a pushback
-    }
-
   }
   else
   {
@@ -151,12 +153,14 @@ double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the
   std::vector<int>::iterator it;
   //std::find finds y in the given vector. y is the column index of the big matrix. But I have to find the column index of colsInd_ containing y
   //to find the position I use std::distance
-  ptrdiff_t pos = std::distance(curr_row.begin(),       std::find (curr_row.begin(), curr_row.end(), y));
+  ptrdiff_t position = std::distance(curr_row.begin(),  std::find (curr_row.begin(), curr_row.end(), y));
+  unsigned int pos = position;
 
-  if(pos >= curr_row.size()) { //no y value present. Then returns 0.
+  if( pos >= curr_row.size() ) { //no y value present. Then returns 0.
     return 0.0;
-  } else {
-    //std::cout << "Pos: " << pos << std::endl;
+  } else
+  {
+
   }
 
   // Using x and pos into rows_ to access the entry value
@@ -171,7 +175,7 @@ double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the
 void SparseMatrix::printMatrix () //prints the matrix
 {
 
-  for( int i=0; i< rowSize_; ++i)
+  for( unsigned int i=0; i< rowSize_; ++i)
   {
     for( unsigned int j=0; j< colSize_; ++j)
     {
@@ -180,29 +184,6 @@ void SparseMatrix::printMatrix () //prints the matrix
     }
     std::cout << std::endl;
   }
-}
-
-//returns the result of the multiplication between a SparseMatrix and a std::vector
-std::vector<double> SparseMatrix::multiplication( const std::vector<double> v ) const
-{
-  if( colSize_ != v.size() ) //checks consistency
-  {
-    std::cout << "Error. Multiplication of matrix and vector cannot be defined." << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  std::vector<double> tmp ( rowSize_ ); // output vector. size = rows of matrix
-  double sums;
-  for( unsigned int i = 0; i<rowSize_; ++i)
-  {
-    sums = 0;
-    for( unsigned int j = 0; j<colSize_; ++j)
-    {
-      sums += getValue(i, j)*v.at(j);
-    }
-    tmp.at(i) = sums;
-  }
-  return tmp;
 }
 
 //Gauss Seidel algorithm
@@ -332,15 +313,19 @@ double LinfNorm ( std::vector<double> v ) //LinfNorm of a vector
   {
     if(max<fabs(v.at(i)))
     {
-      max = v.at(i);
+      max = fabs(v.at(i));
     }
   }
   return max;
 }
 
 //Gauss Seidel algorithm testing function
-void Gauss_Seidel_test( double lambda, double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, const int MaxIter)
+void Gauss_Seidel_test( unsigned int N, double lambda, double delta, SparseMatrix& A, const double tol, const int itCheck, const int MaxIter)
 {
+  std::vector<double> x_0(N, 0);
+  std::vector<double> w (N); //vector w required by the assignment
+  std::vector<double> D(N+1); //vector D required by the assignment
+  std::vector<double> b(N);
   //checks consistency of the matrix and vector sizes
   if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
   {
@@ -348,30 +333,28 @@ void Gauss_Seidel_test( double lambda, double delta, SparseMatrix& A, std::vecto
     exit(EXIT_FAILURE);
   }
 
-  std::vector<double> w (A.getRowSize()); //vector w required by the assignment
-  std::vector<double> D(A.getRowSize()+1); //vector D required by the assignment
+
   double a = 4*(1-delta);
 
-  for(unsigned int i=0; i<A.getRowSize(); ++i)
+  for(unsigned int i=0; i<N; ++i)
   {
-    w.at(i) = (i+1.)/(A.getRowSize()+1);
-    x_0.at(i) = 0;
+    w.at(i) = (i+1.)/(N+1);
     b.at(i) = -2*a*(w.at(i)-0.5)*w.at(0)*w.at(0);
   }
-  b.at(b.size()-1) += 1;
+  b.at(N-1) += 1;
 
 
-  for(unsigned int i=1; i<D.size(); ++i)
+  for(unsigned int i=1; i<N+1; ++i)
   {
     D.at(i) = a*(w.at(i-1)-0.5)*(w.at(i-1)-0.5)+delta;
   }
 
     D.at(0) = D.at(1);
 
-  for( int i=0; i<A.getRowSize(); i++) //initialising w[i], D[i] and A
+  for( unsigned int i=0; i<N; ++i) //initialising w[i], D[i] and A
   {
 
-    for( int j=0; j<A.getColSize(); j++)
+    for( unsigned int j=0; j<N; ++j)
     {
       if( (i-1) == j )
       {
@@ -384,7 +367,7 @@ void Gauss_Seidel_test( double lambda, double delta, SparseMatrix& A, std::vecto
         A.addEntry( i, j, -D.at(i+1) );
       }else
       {
-        A.addEntry( i, j, 0 );
+        continue;
       }
     }
   }
