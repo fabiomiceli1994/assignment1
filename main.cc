@@ -16,7 +16,7 @@ int main()
 
 {
   auto start = std::chrono::high_resolution_clock::now();
-  unsigned int N = 100; //size of matrix
+  unsigned int N = 5000; //size of matrix
 
   //delta is a vector containing the different values I want to test on
   std::vector<double> delta = {1., 10., 50., 100., 500., 1000., 5000., 10000., 50000., 100000.}; //delta
