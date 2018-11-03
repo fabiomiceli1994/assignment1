@@ -20,30 +20,16 @@ public:
   SparseMatrix( const SparseMatrix& source ); //copy constructor
   ~SparseMatrix(); //destructor
 
-  //bool operators for matrixes
-  bool operator==(const SparseMatrix& source);
-  bool operator!=(const SparseMatrix& source);
-
-  //useful operators for the class
-  SparseMatrix operator+(const SparseMatrix& A);
-  SparseMatrix operator*(const std::vector<double> v);
-  SparseMatrix operator-( SparseMatrix& A);
-  SparseMatrix& operator=(const SparseMatrix& source);
-
-
+  //operators within the class
+  std::vector<double> operator*( const std::vector<double>& input ) const;
 
   int getRowSize () const; //gets the number of rows
   int getColSize () const; //gets the number of columns
   void addEntry ( int rowNumb, int colNumb, double newValue); //adds an entry to the matrix in the location [rowNumb][colNumb]
   double getValue (int x, int y) const; //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
-  void printEntries (); //prints the entries in the order they are pushed in
   std::vector<double> multiplication( const std::vector<double> v ) const; //matrix vector multiplication
-  // void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, const int MaxIter ); //Gauss_Seidel
   void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter ); //Gauss_Seidel
-
-
-  //void inversion ( double a, double delta, double tol);
 
 
 private:
@@ -54,14 +40,10 @@ private:
 
 };
 
-
-//multiplication by scalar. opposite order
-SparseMatrix operator*(double a, SparseMatrix A);
 std::vector<double> vectorSum ( std::vector<double> v1, std::vector<double> v2 ); //sums two vectors
 std::vector<double> vectorSub ( std::vector<double> v1, std::vector<double> v2 ); //subtracts two vectors
 double LinfNorm ( std::vector<double> v ); //returns the maximum of a vector. In this case I use it to construct the LinfNorm
 void Gauss_Seidel_test( double lambda, double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, const int MaxIter); //function for testing Gauss_Seidel
-void Gauss_Seidel_delta( double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); //varying deltas for testing
-void Gauss_Seidel_lambda( double lambda, double delta, SparseMatrix& A, std::vector<double>& x_0, std::vector<double>& b, const double tol, const int itCheck, std::string fileName, const int MaxIter); // updating differently the diagonal part to test the algorithm
+
 
 #endif
