@@ -153,14 +153,20 @@ double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the
   // find y in row
   //std::find finds y in the given vector. y is the column index of the big matrix. But I have to find the column index of colsInd_ containing y
   //to find the position I use std::distance
-  ptrdiff_t position = std::distance(curr_row->begin(),  std::find (curr_row->begin(), curr_row->end(), y));
-  unsigned int pos = position;
+  // ptrdiff_t position = std::distance(curr_row->begin(),  std::find (curr_row->begin(), curr_row->end(), y));
+  // unsigned int pos = position;
+  //
+  // if( pos >= curr_row->size() ) { //no y value present. Then returns 0.
+  //   return 0.0;
+  // } else
+  // {
+  //
+  // }
 
-  if( pos >= curr_row->size() ) { //no y value present. Then returns 0.
-    return 0.0;
-  } else
+  int pos = 0;
+  while(y!=curr_row->at(pos))
   {
-
+    pos++;
   }
 
   // Using x and pos into rows_ to access the entry value
@@ -199,9 +205,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   // in every other case
   double sigma; //stores the partial sums I need to implent the algorithm
   int iterations = 0; //counts the iterations which are necessary to converge
-  std::vector<double> residual (b.size()); // declaring the residual
-  //residual = vectorSub(b, multiplication(x_0)); //computing it
-  residual = vectorSub(b, (*this)*x_0); //computing it
+  std::vector<double> residual = vectorSub(b, (*this)*x_0); // residual
 
   // std::cout << LinfNorm(residual) << std::endl;
 
@@ -253,7 +257,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
       myOutFile << std::left << iterations;
       myOutFile.width(25);
       myOutFile << std::left << resMaxNorm << std::endl;
-      myOutFile.flush();
+      // myOutFile.flush();
       if( (iterations % itCheck) == 0 ) //every itCheck iterations, checks that the algorithm hasn't got stuck
       {
         if( resMaxNorm >= resMaxNorm_check ) //if the error stays the same of gets bigger the algorithm has to be stopped, since this a necessary condition for convergence
@@ -326,15 +330,16 @@ void Gauss_Seidel_test( unsigned int N, double lambda, double delta, SparseMatri
   std::vector<double> w (N); //vector w required by the assignment
   std::vector<double> D(N+1); //vector D required by the assignment
   std::vector<double> b(N);
+  double a = 4*(1-delta);
   //checks consistency of the matrix and vector sizes
-  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != x_0.size() ) || ( x_0.size() != b.size() ) )
+  if( ( A.getRowSize() != A.getColSize() ) || ( A.getRowSize() != N ) )
   {
     std::cout << "Error. Size of matrix and vectors are not correct. Method cannot be implemented." << std::endl;
     exit(EXIT_FAILURE);
   }
 
 
-  double a = 4*(1-delta);
+
 
   for(unsigned int i=0; i<N; ++i)
   {
