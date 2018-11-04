@@ -26,7 +26,7 @@ public:
   unsigned int getRowSize () const; //gets the number of rows
   unsigned int getColSize () const; //gets the number of columns
   void addEntry ( unsigned int rowNumb, unsigned int colNumb, double newValue); //adds an entry to the matrix in the location [rowNumb][colNumb]
-  double getValue (int x, int y) const; //return the element (x, y) of the real matrix
+  double getValue (unsigned int x, unsigned int y) const; //return the element (x, y) of the real matrix
   void printMatrix (); //prints the matrix
   void Gauss_Seidel ( std::vector<double>& x_0, const std::vector<double>& b, const double tol, const int itCheck, std::string fileName, std::string fileName2, const int MaxIter ); //Gauss_Seidel
 

@@ -72,7 +72,20 @@ SparseMatrix::SparseMatrix(const SparseMatrix& source )
 
 //destructor
 SparseMatrix::~SparseMatrix()
-{}
+{
+  for (const auto& r : (*rows_)) //cycle on every pointer contained in *rows_
+  {
+    delete r; //deleting the content of each of the pointers, i.e. the vector pointed by r
+  }
+
+  for (const auto& i : (*colsInd_)) //cycle on every pointer contained in *colsInd_
+  {
+    delete i; //deleting the content of each of the pointers, i.e. the vector pointed by i
+  }
+
+  delete(rows_);
+  delete(colsInd_);
+}
 
 
 
@@ -83,16 +96,16 @@ std::vector<double> SparseMatrix::operator*( const std::vector<double>& input ) 
     std::cout << "Error. Multiplication of matrix and vector cannot be defined." << std::endl;
     exit(EXIT_FAILURE);
   }
-  double sums;
-  std::vector<double> tmp ( rowSize_ ); // output vector. size = rows of matrix
+  //double sums;
+  std::vector<double> tmp ( rowSize_, 0 ); // output vector. size = rows of matrix
   for( unsigned int i = 0; i<rowSize_; ++i)
   {
-    sums = 0;
+    //sums = 0;
     for( unsigned j : *colsInd_->at(i) )
     {
-      sums += getValue(i, j)*input.at(j);
+      tmp[i] += getValue(i, j)*input[j];
     }
-    tmp.at(i) = sums;
+    // tmp[i] = sums;
   }
   return tmp;
 }
@@ -140,40 +153,31 @@ void SparseMatrix::addEntry ( unsigned int rowNumb, unsigned int colNumb, double
 }
 
 
-double SparseMatrix::getValue (int x, int y) const //Get the value (x, y) in the real matrix. x is right even inthe actual ones
+double SparseMatrix::getValue (unsigned int x, unsigned int y) const //Get the value (x, y) in the real matrix. x is right even inthe actual ones
 {
-  if ( (*colsInd_).at(x) == 0 )
+
+  if( x>=rowSize_  || y>=colSize_ )
+  {
+    std::cout << "Error. Trying to get a non existing value." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+
+  if ( (*colsInd_)[x] == 0 )
   {
     return 0.0;
   }
 
-  //std::vector<int> curr_row = (*(*colsInd_).at(x)); // copying the x-th vector of colsInd in curr_row
-  std::vector<int>* curr_row = (*colsInd_).at(x); // copying the x-th vector of colsInd in curr_row
+  std::vector<int>* curr_row = (*colsInd_)[x]; // copying the x-th vector of colsInd in curr_row
 
-  // find y in row
-  //std::find finds y in the given vector. y is the column index of the big matrix. But I have to find the column index of colsInd_ containing y
-  //to find the position I use std::distance
-  // ptrdiff_t position = std::distance(curr_row->begin(),  std::find (curr_row->begin(), curr_row->end(), y));
-  // unsigned int pos = position;
-  //
-  // if( pos >= curr_row->size() ) { //no y value present. Then returns 0.
-  //   return 0.0;
-  // } else
-  // {
-  //
-  // }
-
-  int pos = 0;
-  while(y!=curr_row->at(pos))
+  unsigned int pos = 0;
+  while((int)y!=(*curr_row)[pos])
   {
     pos++;
   }
 
   // Using x and pos into rows_ to access the entry value
-  return (*(*rows_).at(x)).at(pos);
-
-  //return found_value;
-
+  return (*(*rows_)[x])[pos];
 }
 
 
@@ -245,7 +249,7 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
       for( unsigned int i=0; i<x_0.size(); ++i)
       {
         sigma = 0;
-        for(unsigned j : *colsInd_->at(i))
+        for(unsigned int j : *colsInd_->at(i))
         {
           if( j != i)
           {
