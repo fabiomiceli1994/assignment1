@@ -1,0 +1,4 @@
+#Details of numerical method Gauss Seidel for a linear sistem Ax = b through Gauss-Seidel algorithm. A is 100x100 matrix. x and b are 100vectors.
+# 1-iterations 2-residual (LinfNorm)    
+1              0.000998004              
+2              9.96012e-07              

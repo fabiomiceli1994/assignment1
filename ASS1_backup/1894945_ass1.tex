@@ -18,7 +18,7 @@
 \usepackage{hyperref}
 \usepackage{braket}
 %\usepackage[latin1]{inputenc}
-\usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
@@ -31,6 +31,15 @@
 \usepackage{fancyhdr}
 \usepackage{wrapfig}
 \usepackage{geometry}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+
 
 %\usepackage{tikz}
 %\usetikzlibrary{graphs}
@@ -50,9 +59,9 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Assignment 1: Sparse Matrices.} % Title
+\title{C1 - Assignment 1 Report: Sparse Matrices.} % Title
 
-\author{u1894945} % Author name
+\author{Student Number: 1894945} % Author name
 
 \date{\today} % Date for the report
 
@@ -61,13 +70,9 @@
 \maketitle % Insert the title, author and date
 
 \begin{center}
-\begin{tabular}{l r}
-%Data dell'esperienza: & 06 Giugno 2016 \\ % Date the experiment was performed
-Author's e-mail: & Fabio.Miceli@warwick.ac.uk \\
-
-Lecturer: & Dr. Tobias Grafke\\% Instructor/supervisor
-
-\end{tabular}
+C1 - Assignment 1 Report \hfill
+Student Number: 1894945
+\vspace{3pt} \hrule \vspace{3pt} \hrule
 \end{center}
 
 %\clearpage
@@ -82,6 +87,8 @@ Lecturer: & Dr. Tobias Grafke\\% Instructor/supervisor
 \clearpage 
 
 \section{Introduction}
+
+\subsection{Well-posed, direct problems}
 The problems that will be addressed in the following are assumed to be always representable in the form: 
 
 \begin{equation}
@@ -90,7 +97,27 @@ The problems that will be addressed in the following are assumed to be always re
 \end{equation}
 
 where $x$ represents the unknown, $d$ the set of data from which the solution depends on and $F$ the functional relation between $x$ and $d$. Such types of problem are called \emph{direct problems} (\cite{numerical-math}).\\
-It is tacitly  
+If the problem admits a unique solution\footnote{In this case $d$ is said to be admissible for \ref{eqn:general-problem}.} $x$ that depends continuously on the data $d$, then the problem is said to be \emph{well-posed} or \emph{stable}. Whenever the aforementioned properties are not satisfied, the problem is said to be \emph{ill-posed}.\\
+
+\subsection{Numerical Methods}
+In the following, it will always be assumed that problem \ref{eqn:general-problem} is well-posed. A numerical method for the approximate solution of the aforementioned equation consists in a sequence of approximate problems:
+
+\begin{equation}
+	\label{eqn:num-method}
+	F_n(x_n, d_n) = 0 \hspace{3mm} n\ge 1
+\end{equation}
+
+with the underlying expectation that $x_n\rightarrow x$ as $n\rightarrow\infty$, i.e. the approximate solution converges to the exact one. 
+
+\begin{definition}
+The numerical method \ref{eqn:num-method} is convergent iff
+
+$$\forall\epsilon >0,\hspace{1mm} \exists n_\epsilon,\hspace{1mm} \exists\delta(n_\epsilon)\hspace{3mm} | \hspace{3mm}\forall n > n_\epsilon,\hspace{1mm} \forall\delta d_n : ||x(d)-x_n(d+\delta d_n)||<\epsilon$$
+
+where $d_n$ is an admissible datum for the $n^{th}$ approximate problem, $\delta d_n$ a perturbation of $d_n$, $x_n(d+\delta d_n)$ the corresponding solution of it and $x(d)$ the solution for corresponding
+ exact problem.
+\end{definition}
+
 
 
 \section{Problem setup}

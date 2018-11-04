@@ -1,0 +1,7 @@
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {subsection}{\numberline {1.1}Well-posed, direct problems}{3}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Numerical Methods}{3}{subsection.1.2}
+\contentsline {section}{\numberline {2}Problem setup}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Performed tests}{3}{subsection.2.1}
+\contentsline {section}{\numberline {3}Conclusive remarks}{3}{section.3}
