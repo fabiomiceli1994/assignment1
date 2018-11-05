@@ -238,6 +238,11 @@ void SparseMatrix::Gauss_Seidel( std::vector<double>& x_0, const std::vector<dou
   myOutFile << std::left << "# 1-iterations" ;
   myOutFile.width(25);
   myOutFile << std::left << "2-residual (LinfNorm)" << std::endl;
+  myOutFile.width(15);
+  myOutFile << std::left << iterations ;
+  myOutFile.width(25);
+  myOutFile << std::left << resMaxNorm << std::endl;
+
   //myOutFile.flush();
   myOutFile2 << "#Solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is " << getRowSize() << "x" << getColSize() << " matrix. x and b are " << b.size() << "vectors." << std::endl;
   myOutFile2.width(25);
@@ -397,6 +402,6 @@ void Gauss_Seidel_test( unsigned int N, double lambda, double delta, const doubl
 
   A.Gauss_Seidel(x_0, b, tol, itCheck, FilenameS, FilenameS2, MaxIter);
 
-  std::cout << "Error (lambda=" << lambda << ", delta="<< delta << ")=" << LinfNorm(vectorSub(w, x_0)) <<std::endl;
+  std::cout << "Error (lambda=" << lambda << ", delta="<< delta << ", N=" << N << ")=" << LinfNorm(vectorSub(w, x_0)) <<  std::endl;
 
 }

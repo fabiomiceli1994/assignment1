@@ -1,2 +1,0 @@
-#Solution of linear sistem Ax = b through Gauss-Seidel algorithm. A is 5000x5000 matrix. x and b are 5000vectors.
-# 1-solution             
