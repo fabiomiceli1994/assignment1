@@ -4,16 +4,16 @@
 \contentsline {subsection}{\numberline {1.2}Numerical Methods}{2}{subsection.1.2}
 \contentsline {subsection}{\numberline {1.3}Linear systems}{3}{subsection.1.3}
 \contentsline {subsubsection}{\numberline {1.3.1}Splitting Methods}{3}{subsubsection.1.3.1}
-\contentsline {subsubsection}{\numberline {1.3.2}Gauss-Seidel Method}{3}{subsubsection.1.3.2}
+\contentsline {subsubsection}{\numberline {1.3.2}Gauss-Seidel Method}{4}{subsubsection.1.3.2}
 \contentsline {section}{\numberline {2}Implementation}{4}{section.2}
-\contentsline {subsection}{\numberline {2.1}Construction of the Gauss-Seidel function}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.1}Construction of the Gauss-Seidel function}{5}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Testing correctness}{5}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Running the program}{5}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Results of the tests}{5}{subsection.2.4}
-\contentsline {subsubsection}{\numberline {2.4.1}Varying the matrix size}{5}{subsubsection.2.4.1}
-\contentsline {subsubsection}{\numberline {2.4.2}Varying $\delta $}{6}{subsubsection.2.4.2}
-\contentsline {subsubsection}{\numberline {2.4.3}Varying $\lambda $}{7}{subsubsection.2.4.3}
-\contentsline {section}{\numberline {3}Conclusive remarks}{8}{section.3}
-\contentsline {subsection}{\numberline {3.1}Memory}{8}{subsection.3.1}
+\contentsline {subsection}{\numberline {2.3}Running the program}{6}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Results of the tests}{6}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Varying the matrix size}{6}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Varying $\delta $}{7}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Varying $\lambda $}{8}{subsubsection.2.4.3}
+\contentsline {section}{\numberline {3}Conclusive remarks}{9}{section.3}
+\contentsline {subsection}{\numberline {3.1}Memory}{9}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Performances}{9}{subsection.3.2}
 \contentsline {subsubsection}{\numberline {3.2.1}Possible solutions}{10}{subsubsection.3.2.1}

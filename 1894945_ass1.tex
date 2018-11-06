@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[11pt]{article}
 %\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
 %\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 %\usepackage{graphicx} % Required for the inclusion of images
@@ -178,7 +178,19 @@ P, which has to be non singular, has not to cost more than $\mathcal{O}(n^2)$ op
 \label{subsubsec:gauss-seidel-method}
 Let the decomposition of $A$ be redefined as $A=D-(E+F)$, where $D$ is the diagonal of $A$, $-E$ and $-F$ are the upper-triangular and lower-triangular components of $A-D$.\\
 The Gauss-Seidel method is defined by setting $P_G=D-E$ and $N_G=F$. Clearly, inverting $P_G$ costs $\mathcal{O}(n^2)$.\\
-It can be proven (see \cite{lec-notes}, \cite{hac94}) that, if $A\in\mathbb{R}^{n\times n}$ is symmetric and positive definite, then the Guass-Seidel method converges for any $x^{(0)}$.\footnote{Clearly, in order to improve convergence of the algorithm, an optimal choice of the \emph{initial guess} $x^{(0)}$ can to be made. }\\
+It can be proven (see \cite{lec-notes}, \cite{hac94}) that, if $A\in\mathbb{R}^{n\times n}$ is symmetric and positive definite, then the Gauss-Seidel method converges for any $x^{(0)}$.\footnote{Clearly, in order to improve convergence of the algorithm, an optimal choice of the \emph{initial guess} $x^{(0)}$ can to be made.} As a matter of fact, the convergence of the iterations depends on $\rho(P^{-1}N)$, $\rho(B)$ being the spectral radius of the matrix $B$. More precisely one can show the following to hold true: 
+
+\begin{theorem}
+For $b\in\mathbb{R}^n$ and $A=P-N\in\mathbb{R}^{n\times n}$, if P is non-singular and $\rho(P^{-1}N)<1$, then the iterates of the splitting scheme $Px^{(k+1)}=Nx^{(k)}+b$ converge to $x=A^{-1}b$ for any $x^{(0)}$.
+\end{theorem}
+\begin{proof}
+Let $e^{(k)}=x^{(k)}-x$ be the error at the $k^{th}$ iterate. Since $P(x^{(k+1)}-x)=N(x^{(k)}-x)$ one has:
+
+$$e^{(k+1)}=(P^{-1}N)^ke^{(0)}$$
+
+which concludes the proof.
+\end{proof}
+
 Taking advantage of the triangular form of $P$, the updating of the $i^{th}$ component of $x$ at the $(k+1)^{th}$ iteration can be written in the following form:
 \begin{equation}
 	\label{eqn:Gauss-Seidel}
@@ -248,7 +260,7 @@ In order to investigate the change in performance for different order of magnitu
 It is clear that the desired closeness to the exact solution, measured in terms of the residual error, is reached independently of how large the initial residual is. This is not surprising: in $\S\ref{subsubsec:gauss-seidel-method}$ it has been pointed out that for symmetric and positive definite matrices the method converges for every initial guess $x_0$. As expected, the residual error is a monotone decreasing function of the iterations.\\
 For $\delta\ge50$, a concave region in the residual error profile is noticeable, signalling a change in the $``$velocity$"$ of convergence. Interestingly, such a region is particularly steep for $\delta=500$ and an overlap with the curves associated with smaller $\delta$ is present.\\
 
-Clearly, the number of iterations required to have a residual error smaller than the fixed tolerance grows with $\delta$, i.e. the code becomes less efficient when $\delta$ grows.\\
+Clearly, the number of iterations required to have a residual error smaller than the fixed tolerance grows with $\delta$, i.e. the code becomes less efficient when $\delta$ grows. In other words, the spectral radius of the matrix $P^{-1}N$ (see $\S\ref{subsubsec:gauss-seidel-method}$) gets smaller for increasing $\delta$.\\
 
 \subsubsection{Varying $\lambda$}
 The performance of the algorithm has been tested for different values of $\lambda$, as required by the assignment. Having shown that the algorithm converges in a reasonably short time even in the case of $N=10000$, the size of the matrix for this series of tests has been fixed to $N=100$.\\
@@ -263,40 +275,8 @@ In order to investigate the change in performance for different order of magnitu
 \end{figure} 
 
 It is clear that the presence of $\lambda$ changes the efficiency of the algorithm. In particular, the plot shows that for $\lambda\ge10^3$, the desired convergence is reached in just two iterations.\\
-This can be understood by recalling what has been mentioned in $\S\ref{subsubsec:splitting-methods}$ and $\S\ref{subsubsec:gauss-seidel-method}$ about the decomposition of A into $P_G=D-E$ and $N_G=F$. The presence of $\lambda\in\mathbb{R}^{+}$ modifies the diagonal component of $A$ and consequently the matrix $D$. The preconditioner matrix $P$ thereby obtained is different from the one of the initial problem and this results in a faster convergence of the method.\\
+This can be understood by recalling what has been mentioned in $\S\ref{subsubsec:splitting-methods}$ and $\S\ref{subsubsec:gauss-seidel-method}$ about the decomposition of A into $P_G=D-E$ and $N_G=F$. The presence of $\lambda\in\mathbb{R}^{+}$ modifies the diagonal component of $A$ and consequently the matrix $D$. The preconditioner matrix $P$ thereby obtained is different from the one of the initial problem and this results in a faster convergence of the method. As a matter of fact, for $\lambda\in\mathbb{R}^{+}$ the matrix becomes strictly diagonal dominant. Differently from the case of $\delta$, the spectral radius of $P^{-1}N$ becomes smaller and a faster convergence is obtained.\\
 
-The change in performance for $\lambda>>1$ can be understood through the following heuristical argument. When $\lambda$ is significantly bigger than the other entries of the matrix, $A$ can be rewritten as follows:
-
-$$A=\lambda I + B$$
-
-for an appropriate $B$ having entries $\mathcal{O}(\varepsilon)$, where $\varepsilon << \lambda$.  Then, naively:
-
-$$||A||=\lambda||I||+\varepsilon\cdot ||B'||+ \varepsilon^2\cdots$$
-
-for $B'$ appropriate. Then, inverting the matrix $A$ becomes almost equivalent to inverting the diagonal matrix $\lambda I$, which is much faster than the inversion of a generic matrix.\\
-
-
-As a matter of fact, for $\lambda\in\mathbb{R}^{+}$ the matrix becomes strictly diagonal dominant...\\
-
-
-
-
-
-
-Let $e^{(k)}=||x^{(k)}-x||$ be the error at the $k^{th}$ iterations, $x$ being the exact solution of the system, then:
-
-$$||e^{(k)}||=||A^{-1}r^{(k)}||\le||A^{-1}||\cdot ||r^{(k)}||$$ 
-
-Since:
-
-$$ Ax=b\implies ||x||^{-1}\le\frac{||A||}{||b||} $$
-
-Then:
-
-$$\frac{||e^{(k)}||}{||x||}\le K(A)\frac{||r^{(k)}||}{||b||}$$
-
-where $\frac{||e^{(k)}||}{||x||}$ is the relative error and $K(A)=\frac{||A||}{||A^{-1}||}$ is the condition number of the matrix.\\
-Naively, when $\lambda$ grows, the matrix becomes $$``more diagonal"$$, meaning that all the entries on the diagonal of the matrix become much bigger than the others.
 
 
 
