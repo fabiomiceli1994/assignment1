@@ -4,9 +4,11 @@ set terminal pdf
 set output 'Gauss_Seidel_delta.pdf'
 set logscale xy
 set key left bottom
+set format y "%.e"
 set yrange [0.000000001:100]
-set xlabel "Iterations (logscale)"
-set ylabel "Residual error in MaxNorm (logscale)"
+set xlabel "Iterations"
+set ylabel "Residual error"
+#set ylabel "$\\|\\text{res}|\\|_{\\infty}$"
 plot 'd_1.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=1", \
      'd_10.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=10", \
      'd_50.000000_l_0.000000_GSResidual_100.txt' using 1:2 with lines title "{/Symbol d}=50", \

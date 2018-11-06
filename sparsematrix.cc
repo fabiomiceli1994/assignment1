@@ -402,6 +402,10 @@ void Gauss_Seidel_test( unsigned int N, double lambda, double delta, const doubl
 
   A.Gauss_Seidel(x_0, b, tol, itCheck, FilenameS, FilenameS2, MaxIter);
 
-  std::cout << "Error (lambda=" << lambda << ", delta="<< delta << ", N=" << N << ")=" << LinfNorm(vectorSub(w, x_0)) <<  std::endl;
+  if( delta==1 && lambda == 0 )
+  {
+    std::cout <<  "Error (N=" << N << ")=" << LinfNorm(vectorSub(w, x_0)) <<  std::endl;
+  }
+
 
 }
